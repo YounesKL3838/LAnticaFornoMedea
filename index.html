@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>L’Antica – Forno | المدية</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&amp;display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d0d0d;--card:#1a1a1a;--line:#2c2c2c;--red:#a4161a;--red2:#c1121f;--txt:#f5f5f5;--mut:#9a9a9a;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--txt);font-family:Cairo,Tahoma,sans-serif;padding-bottom:90px}
+button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}
+.wrap{max-width:1000px;margin:auto;padding:0 14px}
+header{display:flex;align-items:center;justify-content:space-between;padding:12px 0}
+.logo{font-weight:800;font-size:22px;letter-spacing:.5px}.logo b{color:var(--red2)}
+.demo{background:#3a2a00;color:#ffd166;font-size:12px;text-align:center;padding:6px}
+.hero{background:linear-gradient(135deg,#1a0000,#a4161a 160%);border-radius:18px;padding:28px 18px;text-align:center;margin:6px 0 16px}
+.hero h1{margin:0 0 8px;font-size:26px}.hero p{margin:0 0 16px;color:#ddd}
+.btn{background:var(--red);border:0;border-radius:12px;padding:11px 18px;font-weight:600;color:#fff}.btn:hover{background:var(--red2)}
+.btn.sec{background:transparent;border:1px solid var(--line)}.btn.wa{background:#1f9d55;width:100%;padding:14px}
+.info{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}.info div{flex:1;min-width:200px;background:var(--card);border-radius:12px;padding:10px 14px;font-size:14px;color:var(--mut)}
+h2{font-size:18px;margin:18px 0 10px}
+.cats{display:flex;gap:8px;overflow-x:auto;position:sticky;top:0;background:var(--bg);padding:10px 0;z-index:5;scrollbar-width:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--card);border-radius:30px;padding:8px 16px;font-size:14px}.chip.on{background:var(--red);border-color:var(--red)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.card{background:var(--card);border-radius:16px;overflow:hidden;border:1px solid var(--line);display:flex;flex-direction:column}
+.ph{height:110px;display:flex;align-items:center;justify-content:center;font-size:52px;background:radial-gradient(circle,#3a0a0c,#141414)}
+.ph img{width:100%;height:100%;object-fit:cover}
+.cb{padding:12px;display:flex;flex-direction:column;gap:6px;flex:1}.cb h3{margin:0;font-size:16px}.cb small{color:var(--mut)}.cb p{margin:0;font-size:13px;color:#bbb;flex:1}
+.pr{display:flex;justify-content:space-between;align-items:center}.pr b{color:#ff8087}
+.off{opacity:.45;pointer-events:none}
+.fab{position:fixed;bottom:calc(14px + env(safe-area-inset-bottom,0px));left:14px;right:14px;max-width:500px;margin:auto;background:var(--red);border:0;border-radius:16px;padding:14px;display:flex;justify-content:space-between;font-weight:700;box-shadow:0 6px 24px #000a;z-index:8}
+.ov{position:fixed;inset:0;background:#000b;z-index:20;display:none;align-items:flex-end;justify-content:center}.ov.on{display:flex}
+.sheet{background:#141414;width:100%;max-width:560px;max-height:92vh;overflow:auto;border-radius:20px 20px 0 0;padding:16px}
+.sh{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.sh h3{margin:0}
+.x{background:var(--card);border:0;border-radius:50%;width:34px;height:34px}
+.opt{display:flex;justify-content:space-between;align-items:center;padding:9px 10px;border:1px solid var(--line);border-radius:10px;margin:6px 0;font-size:14px;cursor:pointer}
+.opt input{accent-color:var(--red)}.opt span{display:flex;gap:8px;align-items:center}
+textarea,input[type=text],input[type=tel],select{width:100%;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px;margin:4px 0 8px}
+label{font-size:13px;color:var(--mut)}.err{color:#ff6b6b;font-size:13px;min-height:18px}
+.qty{display:flex;align-items:center;gap:10px}.qty button{background:var(--card);border:1px solid var(--line);border-radius:8px;width:32px;height:32px}
+.ci{border-bottom:1px solid var(--line);padding:10px 0}.ci small{display:block;color:var(--mut)}.ci .r{display:flex;justify-content:space-between;align-items:center;margin-top:6px}
+.tot div{display:flex;justify-content:space-between;padding:4px 0}.tot .g{font-size:18px;font-weight:800;border-top:1px solid var(--line);margin-top:6px;padding-top:8px}
+.lnk{background:none;border:0;color:#ff8087;font-size:13px;padding:0 6px}
+.note{background:#102a1a;border-radius:10px;padding:10px;font-size:14px;margin:8px 0}
+footer{text-align:center;color:var(--mut);font-size:12px;padding:24px}
+</style></head><body>
+<script>
+/* ===== إعدادات قابلة للتعديل: CONFIG ===== */
+/*DATA*/const CONFIG={"name":"L’Antica – Forno","city":"المدية، الجزائر","wa":"213779465476","hours":"يوميًا 11:00 – 23:00 (تجريبي)","logo":"","demo":true,"cats":[{"id":"pizza","n":"البيتزا","f":"PIZZA","e":"🍕"},{"id":"sand","n":"السندويتشات","f":"SANDWICH","e":"🥪"},{"id":"panu","n":"البانوزو","f":"PANUZZO","e":"🥟"},{"id":"tacos","n":"التاكوس","f":"TACOS","e":"🌮"},{"id":"burger","n":"البرغر","f":"BURGER","e":"🍔"},{"id":"plats","n":"الوجبات والأطباق","f":"PLATS","e":"🍝"}],"zones":[{"n":"المدية – وسط المدينة","p":200},{"n":"المدية – أطراف المدينة","p":300},{"n":"البرواقية","p":null},{"n":"بلدية أخرى","p":null}],"items":[{"id":"p1","c":"pizza","n":"مارغريتا","f":"Margherita","d":"صلصة طماطم، موزاريلا، ريحان","e":"🍕","top":1,"sizes":[{"n":"صغيرة","p":600},{"n":"وسط","p":900},{"n":"كبيرة","p":1300}],"extras":[{"n":"جبن إضافي","p":150},{"n":"زيتون","p":80}],"rm":["الريحان"]},{"id":"p2","c":"pizza","n":"كوات فرماج","f":"4 Fromages","d":"أربعة أنواع من الجبن","e":"🍕","sizes":[{"n":"وسط","p":1100},{"n":"كبيرة","p":1500}],"extras":[{"n":"جبن إضافي","p":150}],"rm":[]},{"id":"p3","c":"pizza","n":"بيبروني","f":"Pepperoni","d":"موزاريلا وبيبروني","e":"🍕","top":1,"sizes":[{"n":"وسط","p":1000},{"n":"كبيرة","p":1400}],"extras":[{"n":"جبن إضافي","p":150}],"rm":[]},{"id":"s1","c":"sand","n":"سندويتش دجاج","f":"Sandwich Poulet","d":"دجاج مشوي، خس، طماطم، صلصة","e":"🥪","p":450,"extras":[{"n":"جبن","p":60},{"n":"بطاطا","p":50}],"rm":["الطماطم","السلطة"]},{"id":"s2","c":"sand","n":"سندويتش تونة","f":"Sandwich Thon","d":"تونة، زيتون، خس","e":"🥪","p":400,"extras":[{"n":"جبن","p":60}],"rm":["الطماطم","السلطة"]},{"id":"n1","c":"panu","n":"بانوزو جبن","f":"Panuzzo Fromage","d":"عجينة مخبوزة محشوة بالجبن","e":"🥟","top":1,"p":500,"extras":[{"n":"جبن إضافي","p":70}],"rm":[]},{"id":"n2","c":"panu","n":"بانوزو دجاج","f":"Panuzzo Poulet","d":"محشو بالدجاج والجبن","e":"🥟","p":600,"extras":[{"n":"جبن إضافي","p":70}],"rm":["الفطر"]},{"id":"t1","c":"tacos","n":"تاكوس دجاج","f":"Tacos Poulet","d":"دجاج، جبن، صلصة","e":"🌮","top":1,"sizes":[{"n":"M","p":500},{"n":"L","p":700}],"extras":[{"n":"جبن","p":60},{"n":"بطاطا","p":50}],"rm":["البطاطا"]},{"id":"t2","c":"tacos","n":"تاكوس لحم","f":"Tacos Viande","d":"لحم مفروم، جبن، صلصة","e":"🌮","sizes":[{"n":"M","p":600},{"n":"L","p":800}],"extras":[{"n":"جبن","p":60}],"rm":["البطاطا"]},{"id":"b1","c":"burger","n":"برغر كلاسيك","f":"Burger Classic","d":"لحم بقري، خس، طماطم، جبن","e":"🍔","p":650,"extras":[{"n":"جبن إضافي","p":60},{"n":"بيض","p":50}],"rm":["الطماطم","السلطة","البصل"]},{"id":"b2","c":"burger","n":"برغر دجاج","f":"Burger Poulet","d":"دجاج مقرمش، صلصة","e":"🍔","p":600,"extras":[{"n":"جبن إضافي","p":60}],"rm":["الطماطم","السلطة"]},{"id":"l1","c":"plats","n":"لازانيا","f":"Lasagne","d":"طبقات باستا ولحم وبشاميل","e":"🍝","p":900,"extras":[{"n":"جبن إضافي","p":100}],"rm":[]},{"id":"l2","c":"plats","n":"باستا كريمة دجاج","f":"Pasta Crème Poulet","d":"باستا بصلصة الكريمة والدجاج","e":"🍝","p":850,"extras":[],"rm":["الفطر"]}]};/*END*/
+</script>
+<div id="demo" class="demo">⚠️ بيانات وأسعار تجريبية قابلة للتعديل — ليست قائمة المطعم الفعلية</div>
+<div class="wrap">
+<header><div class="logo" id="logo"></div><span><button class="btn sec" onclick="openCart()">🛒 السلة</button> <button class="btn sec" id="admb" style="display:none" onclick="openAdmin()">⚙️ إدارة</button></span></header>
+<section class="hero"><h1>جميع أطباقك المفضلة في مكان واحد</h1><p id="sub"></p><button class="btn" onclick="go('menu')">اطلب الآن</button></section>
+<div class="info"><div>🕒 <span id="hrs"></span></div><div>📍 <span id="cty"></span></div></div>
+<h2>🔥 الأكثر طلبًا</h2><div class="grid" id="top"></div>
+<h2 id="menu">قائمة الطعام</h2><div class="cats" id="cats"></div><div class="grid" id="list"></div>
+<footer>© L’Antica – Forno</footer></div>
+<button class="fab" id="fab" onclick="openCart()" style="display:none"><span id="fq"></span><span>عرض السلة</span><span id="ft"></span></button>
+<div class="ov" id="ov" onclick="if(event.target===this)closeS()"><div class="sheet" id="sh"></div></div>
+<script>
+const $=id=>document.getElementById(id),esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt=n=>new Intl.NumberFormat("fr-DZ").format(n)+" دج";
+const LS={g(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},s(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+let cart=LS.g("antica_cart",[]),form=LS.g("antica_form",{type:"delivery"}),cat=CONFIG.cats[0].id,sel=null;
+const item=id=>CONFIG.items.find(i=>i.id===id);
+const base=(it,size)=>it.sizes?(it.sizes.find(s=>s.n===size)||it.sizes[0]).p:it.p;
+function unit(l){const it=item(l.id);if(!it)return 0;let p=base(it,l.size);(l.ex||[]).forEach(n=>{const e=(it.extras||[]).find(x=>x.n===n);if(e)p+=e.p});return p}
+const sub=()=>cart.reduce((a,l)=>a+unit(l)*l.qty,0),count=()=>cart.reduce((a,l)=>a+l.qty,0);
+const zone=()=>CONFIG.zones.find(z=>z.n===form.zone);
+function delivery(){if(form.type==="pickup")return{v:0,t:"0 دج (استلام)"};const z=zone();if(!z)return{v:null,t:"يُحدد عند اختيار المنطقة"};if(z.p==null)return{v:null,t:"يتم تأكيد تكلفة التوصيل من طرف المطعم"};return{v:z.p,t:fmt(z.p)}}
+function save(){LS.s("antica_cart",cart);LS.s("antica_form",form);paint()}
+function go(id){$(id).scrollIntoView({behavior:"smooth"})}
+function card(it){const from=it.sizes?"من ":"";return `<div class="card ${it.off?"off":""}"><div class="ph">${it.img?`<img loading="lazy" alt="" src="${esc(it.img)}">`:it.e}</div><div class="cb"><h3>${esc(it.n)}</h3><small>${esc(it.f)}</small><p>${esc(it.d)}</p><div class="pr"><b>${from}${fmt(base(it))}</b><button class="btn" onclick="openItem('${it.id}')">${it.off?"غير متوفر":"أضف إلى السلة"}</button></div></div></div>`}
+function paint(){
+ $("logo").innerHTML=CONFIG.logo?`<img src="${esc(CONFIG.logo)}" alt="" height="36">`:`L’Antica <b>Forno</b>`;
+ $("sub").textContent="مطعم إيطالي — "+CONFIG.city;$("hrs").textContent=CONFIG.hours;$("cty").textContent=CONFIG.city;$("demo").style.display=CONFIG.demo?"block":"none";
+ $("top").innerHTML=CONFIG.items.filter(i=>i.top).map(card).join("");
+ $("cats").innerHTML=CONFIG.cats.map(c=>`<button class="chip ${c.id===cat?"on":""}" onclick="cat='${c.id}';paint()">${c.e} ${c.n} ${c.f}</button>`).join("");
+ $("list").innerHTML=CONFIG.items.filter(i=>i.c===cat).map(card).join("");
+ const q=count();$("fab").style.display=q?"flex":"none";$("fq").textContent="🛒 "+q;$("ft").textContent=fmt(sub())}
+function openS(h){$("sh").innerHTML=h;$("ov").classList.add("on")}function closeS(){$("ov").classList.remove("on")}
+/* نافذة الوجبة */
+function openItem(id,key){const it=item(id);if(!it||it.off)return;const old=key?cart.find(l=>l.k===key):null;
+ sel=old?{...old,ex:[...old.ex],rm:[...old.rm],edit:key}:{id,size:it.sizes?it.sizes[0].n:null,ex:[],rm:[],note:"",qty:1};renderItem()}
+function renderItem(){const it=item(sel.id);let h=`<div class="sh"><h3>${esc(it.n)} <small>${esc(it.f)}</small></h3><button class="x" onclick="closeS()">✕</button></div><p style="color:#bbb;margin:0">${esc(it.d)}</p>`;
+ if(it.sizes)h+=`<h4>الحجم</h4>`+it.sizes.map(s=>`<label class="opt"><span><input type="radio" name="sz" ${sel.size===s.n?"checked":""} onchange="sel.size='${esc(s.n)}';renderItem()">${esc(s.n)}</span><b>${fmt(s.p)}</b></label>`).join("");
+ if(it.extras?.length)h+=`<h4>الإضافات</h4>`+it.extras.map(e=>`<label class="opt"><span><input type="checkbox" ${sel.ex.includes(e.n)?"checked":""} onchange="tg('ex','${esc(e.n)}')">${esc(e.n)}</span><b>+${fmt(e.p)}</b></label>`).join("");
+ if(it.rm?.length)h+=`<h4>حذف مكونات</h4>`+it.rm.map(r=>`<label class="opt"><span><input type="checkbox" ${sel.rm.includes(r)?"checked":""} onchange="tg('rm','${esc(r)}')">بدون ${esc(r)}</span></label>`).join("");
+ const u=unit(sel);h+=`<label>ملاحظات الوجبة</label><textarea rows="2" maxlength="200" oninput="sel.note=this.value">${esc(sel.note)}</textarea><div class="pr"><div class="qty"><button onclick="sel.qty=Math.max(1,sel.qty-1);renderItem()">−</button><b>${sel.qty}</b><button onclick="sel.qty=Math.min(50,sel.qty+1);renderItem()">+</button></div><button class="btn" onclick="addCart()">${sel.edit?"حفظ التعديل":"أضف"} — ${fmt(u*sel.qty)}</button></div>`;openS(h)}
+function tg(k,v){const a=sel[k],i=a.indexOf(v);i<0?a.push(v):a.splice(i,1);renderItem()}
+function addCart(){const l={id:sel.id,size:sel.size,ex:[...sel.ex].sort(),rm:[...sel.rm].sort(),note:sel.note.trim(),qty:sel.qty};l.k=[l.id,l.size,l.ex,l.rm,l.note].join("|");
+ if(sel.edit)cart=cart.filter(x=>x.k!==sel.edit);const m=cart.find(x=>x.k===l.k);m?m.qty=Math.min(50,m.qty+l.qty):cart.push(l);save();closeS()}
+/* السلة */
+function chg(k,d){const l=cart.find(x=>x.k===k);if(!l)return;l.qty+=d;if(l.qty<1)cart=cart.filter(x=>x.k!==k);save();openCart()}
+function del(k){cart=cart.filter(x=>x.k!==k);save();openCart()}
+function desc(l){const it=item(l.id);return [l.size&&"الحجم: "+l.size,l.ex.length&&"الإضافات: "+l.ex.join("، "),l.rm.length&&"بدون: "+l.rm.join("، "),l.note&&"ملاحظة: "+l.note].filter(Boolean).join(" • ")}
+function totals(){const d=delivery(),s=sub();return `<div class="tot"><div><span>المجموع الفرعي</span><b>${fmt(s)}</b></div><div><span>التوصيل</span><span>${d.t}</span></div><div class="g"><span>الإجمالي</span><span>${d.v==null?fmt(s)+" + التوصيل":fmt(s+d.v)}</span></div></div>`}
+function openCart(){cart=cart.filter(l=>item(l.id));let h=`<div class="sh"><h3>🛒 سلتك</h3><button class="x" onclick="closeS()">✕</button></div>`;
+ if(!cart.length)h+=`<p style="text-align:center;color:var(--mut);padding:30px 0">السلة فارغة. تصفح القائمة وأضف وجباتك المفضلة.</p><button class="btn" style="width:100%" onclick="closeS()">تصفح القائمة</button>`;
+ else{h+=cart.map(l=>{const it=item(l.id);return `<div class="ci"><b>${esc(it.n)}</b> <small>${esc(desc(l))}</small><small>سعر الوحدة: ${fmt(unit(l))}</small><div class="r"><div class="qty"><button onclick="chg('${esc(l.k)}',-1)">−</button><b>${l.qty}</b><button onclick="chg('${esc(l.k)}',1)">+</button><button class="lnk" onclick="openItem('${l.id}','${esc(l.k)}')">تعديل</button><button class="lnk" onclick="del('${esc(l.k)}')">حذف</button></div><b>${fmt(unit(l)*l.qty)}</b></div></div>`}).join("")+totals()+`<button class="btn" style="width:100%;margin-top:10px" onclick="openCheckout()">إتمام الطلب</button>`}
+ openS(h)}
+/* إتمام الطلب */
+function openCheckout(){if(!cart.length)return openCart();const f=form,del=f.type!=="pickup";
+ openS(`<div class="sh"><h3>إتمام الطلب</h3><button class="x" onclick="openCart()">‹</button></div>
+ <label>الاسم واللقب *</label><input type="text" id="fn" value="${esc(f.name||"")}" autocomplete="name">
+ <label>رقم الهاتف *</label><input type="tel" id="fp" value="${esc(f.phone||"")}" placeholder="05XXXXXXXX" autocomplete="tel">
+ <label>نوع الطلب</label><select id="ft2" onchange="syncF();openCheckout()"><option value="delivery" ${del?"selected":""}>توصيل</option><option value="pickup" ${del?"":"selected"}>استلام من المطعم</option></select>
+ ${del?`<label>منطقة التوصيل *</label><select id="fz" onchange="syncF();openCheckout()"><option value="">اختر المنطقة</option>${CONFIG.zones.map(z=>`<option ${f.zone===z.n?"selected":""}>${esc(z.n)}</option>`).join("")}</select><label>العنوان بالتفصيل *</label><textarea rows="2" id="fa">${esc(f.addr||"")}</textarea>`:""}
+ <label>ملاحظات إضافية</label><textarea rows="2" id="fo">${esc(f.other||"")}</textarea>
+ <h4>ملخص الطلبية</h4>${cart.map(l=>`<div class="ci"><b>${esc(item(l.id).n)} × ${l.qty}</b> <small>${esc(desc(l))}</small></div>`).join("")}${totals()}
+ <div class="err" id="er"></div><button class="btn wa" onclick="sendWA()">تأكيد الطلبية عبر WhatsApp</button>`)}
+function syncF(){const g=i=>$(i)?$(i).value.trim():undefined;form={...form,name:g("fn")??form.name,phone:g("fp")??form.phone,type:g("ft2")??form.type,zone:g("fz")??form.zone,addr:g("fa")??form.addr,other:g("fo")??form.other};save()}
+function sendWA(){syncF();const f=form,del=f.type!=="pickup",e=[];
+ if(!cart.length)e.push("السلة فارغة");if(!f.name||f.name.length<3)e.push("أدخل الاسم واللقب");
+ if(!/^(0|\+?213)[5-7]\d{8}$/.test((f.phone||"").replace(/[\s.-]/g,"")))e.push("رقم هاتف جزائري غير صحيح");
+ if(del&&!f.zone)e.push("اختر منطقة التوصيل");if(del&&(!f.addr||f.addr.length<5))e.push("أدخل العنوان بالتفصيل");
+ if(!/^\d{8,15}$/.test(CONFIG.wa))e.push("رقم WhatsApp للمطعم غير مضبوط");
+ if(e.length){$("er").innerHTML=e.join("<br>");return}
+ const ref="LA-"+new Date().toISOString().slice(2,10).replace(/-/g,"")+"-"+Math.floor(1000+Math.random()*9000),d=delivery(),s=sub();
+ const lines=cart.map(l=>{const it=item(l.id);return ["• "+it.n+" × "+l.qty,l.size&&"   الحجم: "+l.size,l.ex.length&&"   الإضافات: "+l.ex.join("، "),l.rm.length&&"   المكونات المحذوفة: "+l.rm.join("، "),l.note&&"   الملاحظات: "+l.note,"   السعر: "+fmt(unit(l)*l.qty)].filter(Boolean).join("\n")}).join("\n");
+ const msg=["🍕 طلبية جديدة – L’Antica","","رقم الطلبية: "+ref,"","👤 معلومات الزبون:","الاسم: "+f.name,"الهاتف: "+f.phone,"نوع الطلب: "+(del?"توصيل":"استلام من المطعم"),...(del?["","📍 العنوان: "+f.zone+" – "+f.addr]:[]),"","🛒 تفاصيل الطلب:",lines,"","المجموع الفرعي: "+fmt(s),"التوصيل: "+(d.v==null?(del?"يتم تأكيد تكلفة التوصيل من طرف المطعم":"—"):fmt(d.v)),"الإجمالي النهائي: "+(d.v==null?fmt(s)+" + التوصيل":fmt(s+d.v)),...(f.other?["","ملاحظات إضافية: "+f.other]:[]),"","شكرًا لاختياركم L’Antica ❤️"].join("\n");
+ const url="https://wa.me/"+CONFIG.wa+"?text="+encodeURIComponent(msg);window.open(url,"_blank")||(location.href=url);
+ openS(`<div class="sh"><h3>تم فتح WhatsApp</h3><button class="x" onclick="closeS()">✕</button></div><div class="note">⚠️ لم يُرسل طلبك بعد! تأكد من الضغط على زر «إرسال» داخل WhatsApp حتى يصل الطلب إلى المطعم.</div><p>رقم الطلبية: <b>${ref}</b></p><a class="btn" style="display:block;text-align:center;text-decoration:none;margin-bottom:8px" href="${url}" target="_blank" rel="noopener">إعادة فتح WhatsApp</a><button class="btn sec" style="width:100%;margin-bottom:8px" onclick="cart=[];save();closeS()">تم الإرسال – تفريغ السلة</button><button class="btn sec" style="width:100%" onclick="closeS()">رجوع (الاحتفاظ بالسلة)</button>`)}
+/* ===== لوحة الإدارة (للمالك/المحررين فقط عبر صلاحيات claude.ai) ===== */
+const SRC="<!DOCTYPE html>\n"+document.documentElement.outerHTML;
+let W,AR,AI,AT;
+(async()=>{try{const u=await claude.use("user");if(u&&u.canEdit()){AR=await claude.use("artifact");if(AR)$("admb").style.display=""}}catch(e){}})();
+const LS2=(a,pr)=>(a||[]).map(x=>x.n+(pr?":"+x.p:"")).join("، ");
+const PL=s=>String(s||"").split(/[,،\n]/).map(x=>x.trim()).filter(Boolean).map(x=>{const i=x.lastIndexOf(":");return i<0?{n:x,p:0}:{n:x.slice(0,i).trim(),p:Math.max(0,parseInt(x.slice(i+1))||0)}});
+function openAdmin(){W=JSON.parse(JSON.stringify(CONFIG));adm()}
+function asy(){if(!$("aw"))return;W.wa=$("aw").value.replace(/\D/g,"");W.hours=$("ah").value.trim();W.city=$("ac").value.trim();W.demo=$("ad").checked;W.zones=$("az").value.split("\n").map(l=>l.trim()).filter(Boolean).map(l=>{const i=l.lastIndexOf(":");if(i<0)return{n:l,p:null};const v=l.slice(i+1).trim();return{n:l.slice(0,i).trim(),p:v===""?null:Math.max(0,parseInt(v)||0)}})}
+function adm(){openS(`<div class="sh"><h3>⚙️ لوحة الإدارة</h3><button class="x" onclick="closeS()">✕</button></div><p style="font-size:12px;color:var(--mut);margin:0">التغييرات لا تظهر للزبائن إلا بعد «نشر التغييرات».</p>
+<label>رقم WhatsApp (دولي بلا + ولا مسافات)</label><input type="text" id="aw" value="${esc(W.wa)}">
+<label>أوقات العمل</label><input type="text" id="ah" value="${esc(W.hours)}">
+<label>المدينة</label><input type="text" id="ac" value="${esc(W.city)}">
+<label class="opt"><span><input type="checkbox" id="ad" ${W.demo?"checked":""}>إظهار لافتة «بيانات تجريبية»</span></label>
+<label>مناطق التوصيل (سطر لكل منطقة، الاسم:السعر — بلا سعر = يؤكده المطعم)</label><textarea rows="4" id="az">${esc(W.zones.map(z=>z.n+":"+(z.p??"")).join("\n"))}</textarea>
+<h4>الوجبات</h4>${W.items.map((it,i)=>`<div class="ci"><div class="r"><span>${esc(it.n)} <small>${it.sizes?"عدة أحجام":fmt(it.p)}${it.off?" • معطّلة":""}</small></span><span><button class="lnk" onclick="aoff(${i})">${it.off?"تفعيل":"تعطيل"}</button><button class="lnk" onclick="aedit(${i})">تعديل</button><button class="lnk" onclick="adel(${i})">حذف</button></span></div></div>`).join("")}
+<button class="btn sec" style="width:100%;margin:8px 0" onclick="aedit(-1)">+ إضافة وجبة</button><div class="err" id="er"></div><button class="btn wa" onclick="apub()">💾 نشر التغييرات</button>`)}
+function aoff(i){asy();W.items[i].off=W.items[i].off?0:1;adm()}
+function adel(i){asy();W.items.splice(i,1);adm()}
+function aedit(i){asy();AI=i;AT=i<0?{id:"i"+Date.now().toString(36),c:W.cats[0].id,n:"",f:"",d:"",e:"🍽️",p:0,extras:[],rm:[]}:W.items[i];const it=AT;
+openS(`<div class="sh"><h3>${i<0?"وجبة جديدة":"تعديل وجبة"}</h3><button class="x" onclick="adm()">‹</button></div>
+<label>الفئة</label><select id="iC">${W.cats.map(c=>`<option value="${c.id}" ${c.id===it.c?"selected":""}>${c.n}</option>`).join("")}</select>
+<label>الاسم بالعربية *</label><input type="text" id="iN" value="${esc(it.n)}"><label>الاسم بالفرنسية</label><input type="text" id="iF" value="${esc(it.f)}">
+<label>الوصف</label><input type="text" id="iD" value="${esc(it.d)}"><label>رمز تعبيري (يظهر إن لم تكن هناك صورة)</label><input type="text" id="iE" value="${esc(it.e)}">
+<label>السعر (دج) — يُتجاهل إذا حددت أحجامًا</label><input type="tel" id="iP" value="${it.p||""}">
+<label>الأحجام (الاسم:السعر، مفصولة بفاصلة) مثال: وسط:900، كبيرة:1300</label><input type="text" id="iS" value="${esc(LS2(it.sizes,1))}">
+<label>الإضافات (الاسم:السعر) مثال: جبن:150، زيتون:80</label><input type="text" id="iX" value="${esc(LS2(it.extras,1))}">
+<label>مكونات يمكن حذفها مثال: الطماطم، السلطة</label><input type="text" id="iR" value="${esc((it.rm||[]).join("، "))}">
+<label>صورة (اختياري)</label><input type="file" accept="image/*" id="iG"><div class="err" id="er"></div><button class="btn" style="width:100%" onclick="asave()">حفظ الوجبة</button>`)}
+const rs=f=>new Promise(r=>{const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,640/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=im.width*k;c.height=im.height*k;c.getContext("2d").drawImage(im,0,0,c.width,c.height);r(c.toDataURL("image/jpeg",.72))};im.onerror=()=>r(null);im.src=fr.result};fr.onerror=()=>r(null);fr.readAsDataURL(f)});
+async function asave(){const g=i=>$(i).value.trim(),sz=PL(g("iS")),p=parseInt(g("iP"))||0;
+if(!g("iN")){$("er").textContent="أدخل اسم الوجبة";return}if(!sz.length&&p<=0){$("er").textContent="أدخل سعرًا أو أحجامًا";return}
+const it=AT;Object.assign(it,{c:g("iC"),n:g("iN"),f:g("iF"),d:g("iD"),e:g("iE")||"🍽️",extras:PL(g("iX")),rm:g("iR").split(/[,،]/).map(x=>x.trim()).filter(Boolean)});
+if(sz.length){it.sizes=sz;delete it.p}else{it.p=p;delete it.sizes}
+const f=$("iG").files[0];if(f){const d=await rs(f);if(d)it.img=d}
+AI<0?W.items.push(it):W.items[AI]=it;adm()}
+async function apub(){asy();const e=[];if(!/^\d{8,15}$/.test(W.wa))e.push("رقم WhatsApp غير صحيح (أرقام فقط بالصيغة الدولية)");if(!W.items.length)e.push("أضف وجبة واحدة على الأقل");
+if(e.length){$("er").innerHTML=e.join("<br>");return}
+const j=JSON.stringify(W).replace(/</g,"\\u003c"),html=SRC.replace(/\/\*DATA\*\/[\s\S]*?\/\*END\*\//,()=>"/*DATA*/const CONFIG="+j+";/*END*/");
+$("er").textContent="جارٍ النشر…";try{await AR.publish(html)}catch(x){$("er").textContent=x&&x.code==="conflict"?"تم تعديل الصفحة من مكان آخر، أعد فتحها وحاول مجددًا":"تعذر النشر: "+((x&&(x.message||x.code))||"")}}
+paint();
+</script></body></html>
