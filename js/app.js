@@ -59,6 +59,7 @@ async function submitOrder(){
   tr($("er"));
  }finally{SUBMITTING=false;if(b&&b.isConnected){b.disabled=false;b.style.opacity=""}}
 }
+const ph10=s=>{let d=String(s||"").replace(/\D/g,"");if(d.startsWith("213"))d="0"+d.slice(3);return d},phFmt=s=>{const d=ph10(s);return d.length===10?d.replace(/^(\d{4})(\d{2})(\d{2})(\d{2})$/,"$1 $2 $3 $4"):d};
 function showSuccess(d,lines,x){const fr=lang==="fr",L=(a,b)=>fr?b:a,k=n=>`style="--k:${n}"`;x=x||{};
  const T={delivery:["🛵 "+L("توصيل","Livraison"),L("سيتصل بك عامل التوصيل فور تجهيز طلبك، يُرجى إبقاء هاتفك بالقرب منك للرد على المكالمة وتأكيد التوصيل.","Le livreur vous appellera dès que votre commande sera prête. Merci de garder votre téléphone à portée de main pour répondre à l’appel et confirmer la livraison.")],
   pickup:["🏪 "+L("استلام من المطعم","À emporter"),L("مرحبًا بك في المحل! سيكون طلبك جاهزًا قريبًا، يمكنك استلامه عند وصولك.","Bienvenue au restaurant ! Votre commande sera bientôt prête, vous pouvez la récupérer à votre arrivée.")],
@@ -66,7 +67,7 @@ function showSuccess(d,lines,x){const fr=lang==="fr",L=(a,b)=>fr?b:a,k=n=>`style
   reserve:["📅 "+L("حجز طاولة","Réservation"),L("تم تسجيل حجزك. يسعدنا استقبالك في الموعد المحدد.","Votre réservation est enregistrée. Nous serons ravis de vous accueillir à l’heure indiquée.")]}[x.t]||["",""];
  const cf=Array.from({length:22},(_,n)=>`<i style="left:${Math.round(Math.random()*100)}%;--x:${Math.round(Math.random()*120-60)}px;--r:${Math.round(Math.random()*720-360)}deg;--dl:${(Math.random()*.5+.55).toFixed(2)}s;background:${["#34c38f","#ffb703","#ff5d5d","#4c8dff","#c4a0ff"][n%5]}"></i>`).join("");
  const when=x.rt?new Date(x.rt).toLocaleString(fr?"fr-DZ":"ar-DZ",{dateStyle:"medium",timeStyle:"short"}):"";
- const info=[`<b>${T[0]}</b>`,x.t==="reserve"&&x.n?"👤 "+esc(x.n):"",x.t==="reserve"&&when?"🕒 "+esc(when):"",x.t==="delivery"&&x.z?"📍 "+esc(x.z)+(x.a?" — "+esc(x.a):""):"",x.ph&&x.t!=="dine"?"📞 "+esc(x.ph):""].filter(Boolean).map(s=>`<div>${s}</div>`).join("");
+ const info=[`<b>${T[0]}</b>`,x.t==="reserve"&&x.n?"👤 "+esc(x.n):"",x.t==="reserve"&&when?"🕒 "+esc(when):"",x.t==="delivery"&&x.z?"📍 "+esc(x.z)+(x.a?" — "+esc(x.a):""):"",x.ph&&x.t!=="dine"?"📞 "+esc(x.t==="reserve"?phFmt(x.ph):ph10(x.ph)):""].filter(Boolean).map(s=>`<div>${s}</div>`).join("");
  const money=lines?`<div class="tot sx-u" ${k(4)}><div><span>${L("المجموع الفرعي","Sous-total")}</span><b>${fmt(d.subtotal)}</b></div>${d.delivery_fee!=null?`<div><span>${L("التوصيل","Livraison")}</span><b>${fmt(d.delivery_fee)}</b></div>`:d.delivery_fee_pending?`<div><span>${L("التوصيل","Livraison")}</span><span>${L("يتم تأكيد تكلفة التوصيل من طرف المطعم","Frais de livraison à confirmer par le restaurant")}</span></div>`:""}<div class="g"><span>${L("الإجمالي","Total")}</span><span>${fmt(d.total)}${d.delivery_fee_pending?L(" + التوصيل"," + livraison"):""}</span></div></div>`:"";
  openS(`<div class="sx"><div class="sx-cf">${cf}</div>
  <svg class="sx-ic" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46"/><path d="M30 52 L44 66 L71 36"/></svg>
