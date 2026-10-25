@@ -119,3 +119,11 @@ header>span{display:contents}header{justify-content:flex-end;align-items:center;
 @media (prefers-reduced-motion:reduce){#sb{animation:none;box-shadow:0 0 18px 4px #ff2a3680}}
 
 #list{min-height:32vh;touch-action:pan-y pinch-zoom}
+
+/* زر اكتشف قائمتنا */
+.cta{position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:12px;padding:15px 34px;border-radius:999px;border:1px solid rgba(255,255,255,.25);font-weight:800;font-size:17px;letter-spacing:.3px;color:#fff;background:linear-gradient(135deg,#d11a22,#8e1015);box-shadow:0 10px 30px rgba(209,26,34,.45),inset 0 1px 0 rgba(255,255,255,.3);cursor:pointer;transition:transform .25s,box-shadow .25s}
+.cta::before{content:"";position:absolute;top:0;left:-120%;width:60%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.45),transparent);transform:skewX(-20deg);animation:ctashine 3.2s ease-in-out infinite}
+.cta:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 16px 40px rgba(209,26,34,.6)}.cta:active{transform:scale(.97)}
+.cta i{font-style:normal;display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.22);animation:ctabob 1.6s ease-in-out infinite}
+@keyframes ctashine{0%,60%{left:-120%}100%{left:170%}}@keyframes ctabob{50%{transform:translateY(4px)}}
+@media (prefers-reduced-motion:reduce){.cta::before,.cta i{animation:none}}
