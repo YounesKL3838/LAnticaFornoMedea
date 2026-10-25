@@ -127,3 +127,7 @@ header>span{display:contents}header{justify-content:flex-end;align-items:center;
 .cta i{font-style:normal;display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.22);animation:ctabob 1.6s ease-in-out infinite}
 @keyframes ctashine{0%,60%{left:-120%}100%{left:170%}}@keyframes ctabob{50%{transform:translateY(4px)}}
 @media (prefers-reduced-motion:reduce){.cta::before,.cta i{animation:none}}
+
+/* أزرار «نفد اليوم» و«غير متوفر» في القائمة */
+.card .btn.so{background:linear-gradient(135deg,#ffb23f,#e07b00)!important;color:#1a1100!important;box-shadow:none!important;cursor:not-allowed}
+.card .btn.na{background:#3a3a40!important;color:#b8b8c2!important;box-shadow:none!important;cursor:not-allowed}
