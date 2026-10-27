@@ -131,3 +131,7 @@ header>span{display:contents}header{justify-content:flex-end;align-items:center;
 /* أزرار «نفد اليوم» و«غير متوفر» في القائمة */
 .card .btn.so{background:linear-gradient(135deg,#ffb23f,#e07b00)!important;color:#1a1100!important;box-shadow:none!important;cursor:not-allowed}
 .card .btn.na{background:#3a3a40!important;color:#b8b8c2!important;box-shadow:none!important;cursor:not-allowed}
+
+/* تثبيت الصفحة خلف النافذة */
+.ov{overscroll-behavior:contain;touch-action:none}
+.sheet{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;max-height:92vh;max-height:92dvh}

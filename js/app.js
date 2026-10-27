@@ -99,7 +99,10 @@ function paint(){
  $("cats").innerHTML=CONFIG.cats.map(c=>`<button class="chip ${c.id===cat?"on":""}" onclick="cat='${c.id}';ANIM=1;paint()">${c.e} ${lang==="fr"&&c.f?c.f:c.n}</button>`).join("");
  $("list").className="grid"+(ANIM?" an":"");ANIM=0;$("list").innerHTML=(()=>{const L=CONFIG.items.filter(i=>QS?mt(i):i.c===cat);$("cats").style.display=QS?"none":"";return L.length?L.map(card).join(""):`<p data-nt style="text-align:center;color:var(--mut);padding:24px 0">${lang==="fr"?"Aucun résultat":"لا توجد نتائج"}</p>`})();reveal();
  const q=count();$("fq").textContent=q||"";$("fl2").textContent=lang==="fr"?"Voir le panier · "+fmt(sub()).replace("دج","DA"):"عرض السلة · "+fmt(sub());$("fab").classList.toggle("big",q>0);$("ft").textContent=fmt(sub());tr(document.body)}
-function openS(h){$("sh").innerHTML=h;{const x=$("sh").querySelector(".sh .x");if(x){x.classList.add("pin");$("sh").insertBefore(x,$("sh").firstChild)}}$("ov").classList.add("on");tr($("sh"))}function closeS(){$("ov").classList.remove("on")}
+function openS(h){const was=$("ov").classList.contains("on"),st=was?$("sh").scrollTop:0;$("sh").innerHTML=h;{const x=$("sh").querySelector(".sh .x");if(x){x.classList.add("pin");$("sh").insertBefore(x,$("sh").firstChild)}}$("ov").classList.add("on");tr($("sh"));lockScroll();$("sh").scrollTop=st}function closeS(){$("ov").classList.remove("on");unlockScroll()}
+let _sy=0,_lk=false;
+function lockScroll(){if(_lk)return;_lk=true;_sy=window.scrollY;const b=document.body.style;b.position="fixed";b.top=-_sy+"px";b.left="0";b.right="0";b.width="100%"}
+function unlockScroll(){if(!_lk)return;_lk=false;const b=document.body.style;b.position=b.top=b.left=b.right=b.width="";window.scrollTo({top:_sy,left:0,behavior:"instant"})}
 /* نافذة الوجبة */
 function openItem(id,key){const it=item(id);if(!it||isOff(it))return;const old=key?cart.find(l=>l.k===key):null;
  sel=old?{...old,ex:[...old.ex],rm:[...old.rm],edit:key}:{id,size:it.sizes?it.sizes[0].n:null,ch:(it.ch&&it.ch.o&&it.ch.o[0]||{}).n||null,ch2:(it.ch2&&it.ch2.o&&it.ch2.o[0]||{}).n||null,ex:[],rm:[],note:"",qty:1};renderItem()}
