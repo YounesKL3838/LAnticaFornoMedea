@@ -12,7 +12,7 @@ async function loadConfig(){
  const S=by(sizes,"product_id"),E=by(extras,"product_id"),M=by(rms,"product_id"),G=by(groups,"product_id"),O=by(opts,"group_id");
  const pr=(row,sz)=>{const sp=row.size_prices;if(sp&&Object.keys(sp).length){const m={};sz.forEach(s=>m[s.n]=sp[s.id]||0);return m}return row.price||0};
  Object.assign(CONFIG,st.content||{},br.content||{});
- Object.assign(CONFIG,{phone:st.phone,map:st.map_url,social:st.social||{},schedule:st.schedule,dine:st.dine_enabled,tablesList:st.tables_list,logo:br.logo_url||st.logo_url||"",cover:br.cover_url||st.cover_url||"",heroBg:br.hero_url||st.hero_url||""});
+ Object.assign(CONFIG,{tracking:!!st.tracking_enabled,phone:st.phone,map:st.map_url,social:st.social||{},schedule:st.schedule,dine:st.dine_enabled,tablesList:st.tables_list,logo:br.logo_url||st.logo_url||"",cover:br.cover_url||st.cover_url||"",heroBg:br.hero_url||st.hero_url||""});
  CONFIG.cats=cats.map(c=>({id:c.id,n:c.name_ar,f:c.name_fr||"",e:c.emoji||"🍽️"}));
  CONFIG.zones=zones.map(z=>({id:z.id,n:z.name_ar,f:z.name_fr||"",p:z.fee}));
  CONFIG.items=prods.map(p=>{
@@ -28,7 +28,7 @@ async function boot(){
  let cached=false,before="";
  try{const c=JSON.parse(localStorage.getItem("antica_cfg")||"null");if(c&&c.v===1&&Date.now()-c.t<2592e5&&c.d.cats&&c.d.cats.length){Object.assign(CONFIG,c.d);cat=CONFIG.cats[0].id;applyTheme();applyLang();cached=true;before=JSON.stringify(CONFIG)}}catch(e){}
  try{await loadConfig();try{localStorage.setItem("antica_cfg",JSON.stringify({v:1,t:Date.now(),d:CONFIG}))}catch(e){}
-  if(JSON.stringify(CONFIG)!==before){if(!CONFIG.cats.some(c=>c.id===cat))cat=CONFIG.cats[0].id;applyTheme();applyLang()}}
+  if(JSON.stringify(CONFIG)!==before){if(!CONFIG.cats.some(c=>c.id===cat))cat=CONFIG.cats[0].id;applyTheme();applyLang()}tkInit()}
  catch(x){console.error(x);if(!cached)document.body.insertAdjacentHTML("afterbegin",'<div style="position:fixed;inset:0;z-index:100;background:#0d0d0d;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center"><b>تعذّر تحميل قائمة الطعام</b><span>تحقق من اتصالك بالإنترنت ثم أعد المحاولة · Impossible de charger le menu.</span><button class="btn" onclick="location.reload()">إعادة المحاولة · Réessayer</button></div>')}
 }
 const TYPE_DB={delivery:"delivery",pickup:"pickup",dine:"dine_in",reserve:"reservation"};
@@ -52,7 +52,7 @@ async function submitOrder(){
   const {data,error}=await sb.rpc("place_order",{payload:pay});
   if(error)throw error;if(!data||!data.order_number)throw new Error("empty response");
   const lines=cart.map(l=>`<div class="ci"><b>${esc(nm(item(l.id)))} × ${l.qty}</b> <small>${esc(desc(l))}</small></div>`).join("");
-  cart=[];CT=null;save();showSuccess(data,lines,{n:f.name||"",rt:f.rtime||"",t:f.type,z:z?(lang==="fr"&&z.f?z.f:z.n):"",a:f.addr||"",tb:f.table||"",ph:f.phone||""});
+  if(CONFIG.tracking)tkSet({t:CT,n:data.order_number});cart=[];CT=null;save();showSuccess(data,lines,{n:f.name||"",rt:f.rtime||"",t:f.type,z:z?(lang==="fr"&&z.f?z.f:z.n):"",a:f.addr||"",tb:f.table||"",ph:f.phone||""});
  }catch(x){
   console.error(x);const m=String((x&&x.message)||""),L=(a,c)=>fr?c:a;
   $("er").textContent=m.includes("shop_closed")?L("مطعمنا مغلق حاليًا.","Le restaurant est fermé."):/invalid_(size|option|extra|removed)|product_unavailable|invalid_zone|invalid_table/.test(m)?L("تغيّرت القائمة أو لم يعد أحد العناصر متوفرًا. أعد تحميل الصفحة وراجع سلتك.","Le menu a changé. Rechargez la page et vérifiez votre panier."):m.includes("rate_limited")?L("عدد كبير من الطلبات. حاول بعد قليل.","Trop de commandes. Réessayez dans un instant."):/invalid_(name|phone|time)/.test(m)?L("تحقق من الاسم والهاتف ووقت الحجز.","Vérifiez le nom, le téléphone et l’heure."):L("تعذّر إرسال الطلب. سلتك وبياناتك محفوظة، أعد المحاولة.","L’envoi a échoué. Votre panier est conservé, réessayez.");
@@ -76,7 +76,8 @@ function showSuccess(d,lines,x){const fr=lang==="fr",L=(a,b)=>fr?b:a,k=n=>`style
  <p class="sx-u sx-msg" ${k(2)}>${T[1]}</p>
  <div class="sx-box sx-u" ${k(3)}>${info}${lines?`<div class="sx-items">${lines}</div>`:""}</div>
  ${money}
- <button class="btn sx-u" ${k(5)} style="width:100%;margin-top:12px" onclick="closeS()">${L("العودة إلى القائمة","Retour au menu")}</button></div>`);
+ ${CONFIG.tracking?`<button class="btn sec sx-u" ${k(5)} style="width:100%;margin-top:12px" onclick="openTrack()">📍 ${L("تتبّع طلبي","Suivre ma commande")}</button>`:""}
+ <button class="btn sx-u" ${k(5)} style="width:100%;margin-top:10px" onclick="closeS()">${L("العودة إلى القائمة","Retour au menu")}</button></div>`);
  try{navigator.vibrate&&navigator.vibrate([40,30,40])}catch(e){}}
 let ANIM=1,QS="";
 const $=id=>document.getElementById(id),esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -99,7 +100,7 @@ function paint(){
  $("cats").innerHTML=CONFIG.cats.map(c=>`<button class="chip ${c.id===cat?"on":""}" onclick="cat='${c.id}';ANIM=1;paint()">${c.e} ${lang==="fr"&&c.f?c.f:c.n}</button>`).join("");
  $("list").className="grid"+(ANIM?" an":"");ANIM=0;$("list").innerHTML=(()=>{const L=CONFIG.items.filter(i=>QS?mt(i):i.c===cat);$("cats").style.display=QS?"none":"";return L.length?L.map(card).join(""):`<p data-nt style="text-align:center;color:var(--mut);padding:24px 0">${lang==="fr"?"Aucun résultat":"لا توجد نتائج"}</p>`})();reveal();
  const q=count();$("fq").textContent=q||"";$("fl2").textContent=lang==="fr"?"Voir le panier · "+fmt(sub()).replace("دج","DA"):"عرض السلة · "+fmt(sub());$("fab").classList.toggle("big",q>0);$("ft").textContent=fmt(sub());tr(document.body)}
-function openS(h){const was=$("ov").classList.contains("on"),st=was?$("sh").scrollTop:0;$("sh").innerHTML=h;{const x=$("sh").querySelector(".sh .x");if(x){x.classList.add("pin");$("sh").insertBefore(x,$("sh").firstChild)}}$("ov").classList.add("on");tr($("sh"));lockScroll();$("sh").scrollTop=st}function closeS(){$("ov").classList.remove("on");unlockScroll()}
+function openS(h){const was=$("ov").classList.contains("on"),st=was?$("sh").scrollTop:0;$("sh").innerHTML=h;{const x=$("sh").querySelector(".sh .x");if(x){x.classList.add("pin");$("sh").insertBefore(x,$("sh").firstChild)}}$("ov").classList.add("on");tr($("sh"));lockScroll();$("sh").scrollTop=st}function closeS(){$("ov").classList.remove("on");unlockScroll();clearInterval(tkTimer);tkPill()}
 let _sy=0,_lk=false;
 function lockScroll(){if(_lk)return;_lk=true;_sy=window.scrollY;const b=document.body.style;b.position="fixed";b.top=-_sy+"px";b.left="0";b.right="0";b.width="100%"}
 function unlockScroll(){if(!_lk)return;_lk=false;const b=document.body.style;b.position=b.top=b.left=b.right=b.width="";window.scrollTo({top:_sy,left:0,behavior:"instant"})}
@@ -266,6 +267,28 @@ const chl=(it,n,k)=>{const o=(((it[k||"ch"])||{}).o||[]).find(x=>x.n===n);return
 let _y=scrollY;addEventListener("scroll",()=>{const hb=document.getElementById("hbg");if(hb)hb.style.opacity=Math.max(0,1-scrollY/360);const y=scrollY,h=document.getElementById("hl");document.body.style.setProperty("--dy",(y>_y?28:-28)+"px");_y=y;if(h){h.style.transform=`translateY(${Math.min(y,300)*.25}px)`;h.style.opacity=Math.max(0,1-y/380)}},{passive:true});
 const IO=typeof IntersectionObserver!=="undefined"?new IntersectionObserver(es=>es.forEach(e=>e.target.classList.toggle("in",e.isIntersecting)),{threshold:.06}):null;
 function reveal(){document.querySelectorAll("#list .card").forEach(c=>{c.classList.add("rv");const r=c.getBoundingClientRect();if(!IO||(r.top<innerHeight&&r.bottom>0))c.classList.add("in");IO&&IO.observe(c)})}
+/* ===== تتبّع الطلب (خدمة اختيارية) ===== */
+const TKEY="antica_track";let tkTimer=null;
+const tkGet=()=>{try{const o=JSON.parse(localStorage.getItem(TKEY)||"null");return o&&o.t&&Date.now()-o.ts<864e5?o:null}catch(e){return null}};
+const tkSet=o=>{try{localStorage.setItem(TKEY,JSON.stringify({...o,ts:o.ts||Date.now()}))}catch(e){}};
+const TSTEPS={delivery:["new","confirmed","ready","out_for_delivery","completed"],pickup:["new","confirmed","ready","completed"],dine_in:["new","confirmed","ready","completed"],reservation:["new","confirmed","completed"]};
+function tkLbl(s,fr){return({new:["تم استلام طلبك","Commande reçue"],confirmed:["تم تأكيد طلبك","Commande confirmée"],ready:["طلبك جاهز","Commande prête"],out_for_delivery:["طلبك في الطريق إليك","En route vers vous"],completed:["تم إنجاز الطلب","Terminée"],cancelled:["تم إلغاء الطلب","Commande annulée"]}[s]||["",""])[fr?1:0]}
+function tkMsg(s,t,fr){const m={new:["نراجع طلبك الآن.","Nous examinons votre commande."],confirmed:["بدأنا في تجهيز طلبك.","Nous préparons votre commande."],ready:[t==="delivery"?"طلبك جاهز وبانتظار عامل التوصيل.":"طلبك جاهز.",t==="delivery"?"Prête, en attente du livreur.":"Votre commande est prête."],out_for_delivery:["احتفظ بهاتفك قريبًا منك للرد على المكالمة.","Gardez votre téléphone près de vous pour répondre à l’appel."],completed:["شكرًا لثقتك بنا!","Merci de votre confiance !"]}[s];return m?m[fr?1:0]:""}
+function tkHtml(d){const fr=lang==="fr",L=(x,y)=>fr?y:x,steps=TSTEPS[d.order_type]||TSTEPS.pickup,cx=d.status==="cancelled",i=steps.indexOf(d.status);
+ return `<div class="tk"><div class="sh"><h3>📍 ${L("تتبّع طلبك","Suivi de commande")}</h3><button class="x" onclick="closeS()">✕</button></div>
+ <div class="tk-no">${L("الرقم المرجعي","N° de référence")} <b dir="ltr">${esc(d.order_number)}</b></div>
+ ${cx?`<div class="tk-cx">❌ ${tkLbl("cancelled",fr)}</div>`:`<ol class="tk-l">${steps.map((s,k)=>`<li class="${k<i?"done":k===i?"now":""}"><span class="dot">${k<i?"✓":""}</span><div><b>${tkLbl(s,fr)}</b>${k===i?`<small>${tkMsg(s,d.order_type,fr)}</small>`:""}</div></li>`).join("")}</ol>`}
+ ${d.total>0?`<div class="tot"><div class="g"><span>${L("الإجمالي","Total")}</span><span>${fmt(d.total)}${d.delivery_fee_pending?L(" + التوصيل"," + livraison"):""}</span></div></div>`:""}
+ <button class="btn sec" style="width:100%;margin-top:12px" onclick="tkCopy(this)">🔗 ${L("نسخ رابط التتبع","Copier le lien de suivi")}</button></div>`}
+async function openTrack(){const o=tkGet();if(!o||!CONFIG.tracking)return;
+ const draw=async()=>{let r;try{r=await sb.rpc("track_order",{token:o.t})}catch(e){return}
+  const d=r&&r.data;if(!d||d.enabled===false||d.found===false){if(d&&d.found===false){try{localStorage.removeItem(TKEY)}catch(e){}}openS(`<div class="sh"><h3>📍 ${lang==="fr"?"Suivi de commande":"تتبّع طلبك"}</h3><button class="x" onclick="closeS()">✕</button></div><p style="text-align:center">${lang==="fr"?"Commande introuvable ou service désactivé.":"لم يتم العثور على الطلب أو أن الخدمة متوقفة."}</p>`);clearInterval(tkTimer);return}
+  openS(tkHtml(d));if(d.status==="completed"||d.status==="cancelled"){clearInterval(tkTimer);tkSet({...o,done:1})}};
+ await draw();clearInterval(tkTimer);tkTimer=setInterval(()=>{if($("ov").classList.contains("on")&&$("sh").querySelector(".tk"))draw();else clearInterval(tkTimer)},8000)}
+async function tkCopy(b){const o=tkGet();if(!o)return;const u=location.origin+location.pathname+"?track="+o.t;try{await navigator.clipboard.writeText(u);b.textContent="✓ "+(lang==="fr"?"Lien copié":"تم النسخ")}catch(e){prompt(lang==="fr"?"Copiez ce lien":"انسخ الرابط",u)}}
+function tkPill(){let p=$("tkpill");const o=tkGet(),on=CONFIG.tracking&&o&&!o.done;if(!on){p&&p.remove();return}if(!p){p=document.createElement("button");p.id="tkpill";p.className="tkpill";p.onclick=openTrack;document.body.appendChild(p)}p.textContent="📍 "+(lang==="fr"?"Suivre ma commande":"تتبّع طلبك")}
+function tkInit(){if(!CONFIG.tracking){tkPill();return}const q=new URLSearchParams(location.search).get("track");
+ if(q&&/^[0-9a-f-]{36}$/i.test(q)){tkSet({t:q,n:"",ts:Date.now()});history.replaceState(null,"",location.pathname);tkPill();setTimeout(openTrack,400);return}tkPill()}
 /* السحب يمينًا/يسارًا لتغيير الفئة مع حركة انزلاق */
 (function(){const el=$("list"),rmq=matchMedia("(prefers-reduced-motion:reduce)");let x0=0,y0=0,on=false,hz=false,busy=false;
  const reset=()=>{el.style.transition="transform .3s cubic-bezier(.2,1.2,.4,1),opacity .2s";el.style.transform="";el.style.opacity=""};
