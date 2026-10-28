@@ -26,7 +26,7 @@ async function loadConfig(){
 }
 async function boot(){
  let cached=false,before="";
- try{const c=JSON.parse(localStorage.getItem("antica_cfg")||"null");if(c&&c.v===1&&Date.now()-c.t<2592e5&&c.d.cats&&c.d.cats.length){Object.assign(CONFIG,c.d);cat=CONFIG.cats[0].id;applyTheme();applyLang();cached=true;before=JSON.stringify(CONFIG)}}catch(e){}
+ try{const c=JSON.parse(localStorage.getItem("antica_cfg")||"null");if(c&&c.v===1&&Date.now()-c.t<2592e5&&c.d.cats&&c.d.cats.length){Object.assign(CONFIG,c.d);CONFIG.tracking=false;cat=CONFIG.cats[0].id;applyTheme();applyLang();cached=true;before=JSON.stringify(CONFIG)}}catch(e){}
  try{await loadConfig();try{localStorage.setItem("antica_cfg",JSON.stringify({v:1,t:Date.now(),d:CONFIG}))}catch(e){}
   if(JSON.stringify(CONFIG)!==before){if(!CONFIG.cats.some(c=>c.id===cat))cat=CONFIG.cats[0].id;applyTheme();applyLang()}tkInit()}
  catch(x){console.error(x);if(!cached)document.body.insertAdjacentHTML("afterbegin",'<div style="position:fixed;inset:0;z-index:100;background:#0d0d0d;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center"><b>تعذّر تحميل قائمة الطعام</b><span>تحقق من اتصالك بالإنترنت ثم أعد المحاولة · Impossible de charger le menu.</span><button class="btn" onclick="location.reload()">إعادة المحاولة · Réessayer</button></div>')}
@@ -52,7 +52,7 @@ async function submitOrder(){
   const {data,error}=await sb.rpc("place_order",{payload:pay});
   if(error)throw error;if(!data||!data.order_number)throw new Error("empty response");
   const lines=cart.map(l=>`<div class="ci"><b>${esc(nm(item(l.id)))} × ${l.qty}</b> <small>${esc(desc(l))}</small></div>`).join("");
-  if(CONFIG.tracking)tkSet({t:CT,n:data.order_number});cart=[];CT=null;save();showSuccess(data,lines,{n:f.name||"",rt:f.rtime||"",t:f.type,z:z?(lang==="fr"&&z.f?z.f:z.n):"",a:f.addr||"",tb:f.table||"",ph:f.phone||""});
+  await refreshTk();if(CONFIG.tracking)tkSet({t:CT,n:data.order_number});cart=[];CT=null;save();showSuccess(data,lines,{n:f.name||"",rt:f.rtime||"",t:f.type,z:z?(lang==="fr"&&z.f?z.f:z.n):"",a:f.addr||"",tb:f.table||"",ph:f.phone||""});
  }catch(x){
   console.error(x);const m=String((x&&x.message)||""),L=(a,c)=>fr?c:a;
   $("er").textContent=m.includes("shop_closed")?L("مطعمنا مغلق حاليًا.","Le restaurant est fermé."):/invalid_(size|option|extra|removed)|product_unavailable|invalid_zone|invalid_table/.test(m)?L("تغيّرت القائمة أو لم يعد أحد العناصر متوفرًا. أعد تحميل الصفحة وراجع سلتك.","Le menu a changé. Rechargez la page et vérifiez votre panier."):m.includes("rate_limited")?L("عدد كبير من الطلبات. حاول بعد قليل.","Trop de commandes. Réessayez dans un instant."):/invalid_(name|phone|time)/.test(m)?L("تحقق من الاسم والهاتف ووقت الحجز.","Vérifiez le nom, le téléphone et l’heure."):L("تعذّر إرسال الطلب. سلتك وبياناتك محفوظة، أعد المحاولة.","L’envoi a échoué. Votre panier est conservé, réessayez.");
@@ -278,14 +278,17 @@ function tkHtml(d){const fr=lang==="fr",L=(x,y)=>fr?y:x,steps=TSTEPS[d.order_typ
  return `<div class="tk"><div class="sh"><h3>📍 ${L("تتبّع طلبك","Suivi de commande")}</h3><button class="x" onclick="closeS()">✕</button></div>
  <div class="tk-no">${L("الرقم المرجعي","N° de référence")} <b dir="ltr">${esc(d.order_number)}</b></div>
  ${cx?`<div class="tk-cx">❌ ${tkLbl("cancelled",fr)}</div>`:`<ol class="tk-l">${steps.map((s,k)=>`<li class="${k<i?"done":k===i?"now":""}"><span class="dot">${k<i?"✓":""}</span><div><b>${tkLbl(s,fr)}</b>${k===i?`<small>${tkMsg(s,d.order_type,fr)}</small>`:""}</div></li>`).join("")}</ol>`}
+ ${d.driver_name?`<div class="tk-dr">🛵 ${L("عامل التوصيل","Livreur")} : <b>${esc(lang==="fr"&&d.driver_name_fr?d.driver_name_fr:d.driver_name)}</b>${d.driver_phone?` — <a href="tel:${esc(ph10(d.driver_phone))}" dir="ltr">${esc(phFmt(d.driver_phone))}</a>`:""}</div>`:""}
  ${d.total>0?`<div class="tot"><div class="g"><span>${L("الإجمالي","Total")}</span><span>${fmt(d.total)}${d.delivery_fee_pending?L(" + التوصيل"," + livraison"):""}</span></div></div>`:""}
  <button class="btn sec" style="width:100%;margin-top:12px" onclick="tkCopy(this)">🔗 ${L("نسخ رابط التتبع","Copier le lien de suivi")}</button></div>`}
 async function openTrack(){const o=tkGet();if(!o||!CONFIG.tracking)return;
  const draw=async()=>{let r;try{r=await sb.rpc("track_order",{token:o.t})}catch(e){return}
-  const d=r&&r.data;if(!d||d.enabled===false||d.found===false){if(d&&d.found===false){try{localStorage.removeItem(TKEY)}catch(e){}}openS(`<div class="sh"><h3>📍 ${lang==="fr"?"Suivi de commande":"تتبّع طلبك"}</h3><button class="x" onclick="closeS()">✕</button></div><p style="text-align:center">${lang==="fr"?"Commande introuvable ou service désactivé.":"لم يتم العثور على الطلب أو أن الخدمة متوقفة."}</p>`);clearInterval(tkTimer);return}
+  const d=r&&r.data;if(d&&d.enabled===false){CONFIG.tracking=false;clearInterval(tkTimer);closeS();tkPill();return}if(!d||d.found===false){if(d&&d.found===false){try{localStorage.removeItem(TKEY)}catch(e){}}openS(`<div class="sh"><h3>📍 ${lang==="fr"?"Suivi de commande":"تتبّع طلبك"}</h3><button class="x" onclick="closeS()">✕</button></div><p style="text-align:center">${lang==="fr"?"Commande introuvable ou service désactivé.":"لم يتم العثور على الطلب أو أن الخدمة متوقفة."}</p>`);clearInterval(tkTimer);return}
   openS(tkHtml(d));if(d.status==="completed"||d.status==="cancelled"){clearInterval(tkTimer);tkSet({...o,done:1})}};
  await draw();clearInterval(tkTimer);tkTimer=setInterval(()=>{if($("ov").classList.contains("on")&&$("sh").querySelector(".tk"))draw();else clearInterval(tkTimer)},8000)}
 async function tkCopy(b){const o=tkGet();if(!o)return;const u=location.origin+location.pathname+"?track="+o.t;try{await navigator.clipboard.writeText(u);b.textContent="✓ "+(lang==="fr"?"Lien copié":"تم النسخ")}catch(e){prompt(lang==="fr"?"Copiez ce lien":"انسخ الرابط",u)}}
+async function refreshTk(){try{const s=await sb.from("restaurant_settings").select("tracking_enabled").eq("id",1).maybeSingle();CONFIG.tracking=!!(s.data&&s.data.tracking_enabled)}catch(e){}}
+document.addEventListener("visibilitychange",async()=>{if(document.visibilityState==="visible"&&CONFIG.cats.length){await refreshTk();tkPill()}});
 function tkPill(){let p=$("tkpill");const o=tkGet(),on=CONFIG.tracking&&o&&!o.done;if(!on){p&&p.remove();return}if(!p){p=document.createElement("button");p.id="tkpill";p.className="tkpill";p.onclick=openTrack;document.body.appendChild(p)}p.textContent="📍 "+(lang==="fr"?"Suivre ma commande":"تتبّع طلبك")}
 function tkInit(){if(!CONFIG.tracking){tkPill();return}const q=new URLSearchParams(location.search).get("track");
  if(q&&/^[0-9a-f-]{36}$/i.test(q)){tkSet({t:q,n:"",ts:Date.now()});history.replaceState(null,"",location.pathname);tkPill();setTimeout(openTrack,400);return}tkPill()}

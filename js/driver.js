@@ -1,0 +1,37 @@
+const $=id=>document.getElementById(id),E=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const FR=localStorage.getItem("drv_lang")==="fr",L=(a,b)=>FR?b:a,KEY="antica_driver",fmt=n=>new Intl.NumberFormat("fr-DZ").format(n)+(FR?" DA":" دج");
+let me=null,tab="new",orders=[],seen=null,timer=null,lim=1,act=0;
+try{me=JSON.parse(localStorage.getItem(KEY)||"null")}catch(e){}
+document.documentElement.lang=FR?"fr":"ar";document.documentElement.dir=FR?"ltr":"rtl";document.title=L("عمال التوصيل","Livreurs");
+$("h_t").textContent="🛵 "+L("عامل التوصيل","Livreur");$("l_n").textContent=L("الاسم (عربي أو فرنسي)","Nom (arabe ou français)");$("l_k").textContent=L("الرقم السري","Code secret");$("lg").textContent=L("دخول","Se connecter");
+$("lo").textContent=L("خروج","Déconnexion");$("tn").textContent="🆕 "+L("جديدة","Nouvelles");$("tm").textContent="📦 "+L("طلباتي","Mes commandes");$("sb").textContent=L("التوصيل","Livraison");
+document.querySelectorAll(".lang").forEach(b=>{b.textContent=FR?"العربية":"Français";b.onclick=()=>{localStorage.setItem("drv_lang",FR?"ar":"fr");location.reload()}});
+const nm=(o,k)=>FR&&o[k+"_fr"]?o[k+"_fr"]:o[k];
+async function call(fn,args){const r=await sb.rpc(fn,{p_name:me.n,p_pin:me.k,...(args||{})});if(r.error)throw r.error;return r.data}
+function beep(){try{const c=new AudioContext(),o=c.createOscillator();o.connect(c.destination);o.frequency.value=880;o.start();setTimeout(()=>{o.stop();c.close()},400)}catch(e){}try{navigator.vibrate&&navigator.vibrate([200,100,200])}catch(e){}}
+$("lf").onsubmit=async ev=>{ev.preventDefault();$("lm").textContent="";const t={n:$("dn").value.trim(),k:$("dk").value};me=t;
+ try{const r=await call("driver_login");if(!r||!r.ok){me=null;$("lm").textContent=L("الاسم أو الرقم السري غير صحيح (أو تم إيقاف المحاولات مؤقتًا)","Nom ou code secret incorrect (ou tentatives suspendues)");return}
+  me={n:t.n,k:t.k,d:FR&&r.name_fr?r.name_fr:r.name};localStorage.setItem(KEY,JSON.stringify(me));enter()}
+ catch(x){me=null;$("lm").textContent=L("تعذّر الاتصال. تأكد أن المدير شغّل update-v11.sql","Connexion impossible. Vérifiez que update-v11.sql a été exécuté")}};
+$("lo").onclick=()=>{localStorage.removeItem(KEY);clearInterval(timer);location.reload()};
+function enter(){$("login").hidden=true;$("app").hidden=false;$("who").textContent=me.d||me.n;refresh();clearInterval(timer);timer=setInterval(refresh,3000)}
+document.querySelectorAll("[data-t]").forEach(b=>b.onclick=()=>{tab=b.dataset.t;document.querySelectorAll("[data-t]").forEach(x=>x.classList.toggle("on",x===b));render()});
+async function refresh(){let d;try{d=await call("driver_orders")}catch(e){return}
+ if(!d||!d.ok){localStorage.removeItem(KEY);clearInterval(timer);alert(L("انتهت الجلسة أو تغيّر الرقم السري. سجّل الدخول من جديد.","Session expirée ou code secret modifié. Reconnectez-vous."));location.reload();return}
+ orders=d.orders||[];lim=d.max||1;act=d.active||0;const fresh=orders.filter(o=>!o.mine&&seen&&!seen.has(o.id));
+ if(fresh.length){$("toast").textContent=L("🔔 طلب توصيل جديد: ","🔔 Nouvelle livraison : ")+fresh.map(o=>o.order_number).join(", ");$("toast").hidden=false;beep();setTimeout(()=>$("toast").hidden=true,8000)}
+ seen=new Set(orders.map(o=>o.id));render()}
+const items=o=>(o.items||[]).map(l=>`<div>${l.qty}× ${E(nm(l,"name"))}${l.size?" ("+E(nm(l,"size"))+")":""}<small>${[...(l.choices||[]).map(c=>E(nm(c,"name"))),(l.extras||[]).length?"+ "+l.extras.map(e=>E(nm(e,"name"))).join(", "):"",(l.removed||[]).length?L("بدون: ","Sans : ")+l.removed.map(e=>E(nm(e,"name"))).join(", "):"",l.note?E(l.note):""].filter(Boolean).join(" • ")}</small></div>`).join("");
+const ST=()=>({confirmed:L("مؤكد","Confirmée"),ready:L("جاهز","Prête"),out_for_delivery:L("في الطريق","En route"),completed:L("تم التسليم","Livrée"),new:L("جديد","Nouvelle")});
+function render(){const av=orders.filter(o=>!o.mine),mi=orders.filter(o=>o.mine),Ls=tab==="new"?av:mi,nb=$("nb"),full=act>=lim,S=ST();nb.textContent=av.length;nb.hidden=!av.length;
+ const note=full&&tab==="new"&&av.length?`<div class="tk-cx" style="margin-bottom:10px">${L("أنهِ طلبك الحالي أولًا للحصول على طلب جديد (الحد المسموح: "+lim+")","Terminez d’abord votre commande en cours (limite autorisée : "+lim+")")}</div>`:"";
+ $("list").innerHTML=note+Ls.map(o=>{const act2=!o.mine?(full?`<button class="b ok2" disabled style="opacity:.45">${L("✅ قبول وتأكيد الطلب","✅ Accepter et confirmer")}</button>`:`<button class="b ok2" data-a="take" data-i="${o.id}">${L("✅ قبول وتأكيد الطلب","✅ Accepter et confirmer")}</button>`):o.status==="out_for_delivery"?`<button class="b ok2" data-a="done" data-i="${o.id}">${L("✔️ تم التسليم","✔️ Livrée")}</button>`:o.status==="completed"?"":`<button class="b ok2" data-a="out" data-i="${o.id}">${L("🛵 خرجت للتوصيل","🛵 Je pars livrer")}</button>`;
+  return `<div class="o dc st-${o.status}"><div class="row"><b dir="ltr">${E(o.order_number)}</b><span class="tag t-${o.status}">${S[o.status]||o.status}</span><small>${new Date(o.created_at).toLocaleTimeString("fr-DZ",{hour:"2-digit",minute:"2-digit"})}</small></div>
+  <div class="det" style="animation:none"><div>📍 ${E(FR&&o.zone_fr?o.zone_fr:o.zone||"")} ${E(o.address||"")}</div>${o.phone?`<div>📞 <a href="tel:${E(o.phone)}" style="color:#ff8087" dir="ltr">${E(o.phone)}</a></div>`:o.mine&&o.status!=="completed"?`<div class="mut">🔒 ${L("يظهر رقم الزبون بعد الضغط على «خرجت للتوصيل»","Le numéro du client s’affiche après « Je pars livrer »")}</div>`:""}${o.notes?`<div>📝 ${E(o.notes)}</div>`:""}
+  <div style="margin:6px 0">${items(o)}</div><div>💰 <b>${fmt(o.total)}</b>${o.delivery_fee_pending?L(" + توصيل"," + livraison"):""}</div>${act2?`<div style="margin-top:10px">${act2}</div>`:""}</div></div>`}).join("")||`<p class="mut" style="text-align:center;margin-top:30px">${tab==="new"?L("لا توجد طلبات جديدة الآن","Aucune nouvelle commande"):L("لا توجد طلبات لديك","Aucune commande")}</p>`}
+$("list").onclick=async e=>{const b=e.target.closest("[data-a]");if(!b)return;if(b.dataset.a==="out"&&!confirm(L("هل أنت متأكد أن الطلبية جاهزة؟","Êtes-vous sûr que la commande est prête ?")))return;b.disabled=true;const id=b.dataset.i;
+ try{const r=b.dataset.a==="take"?await call("driver_confirm",{p_order:id}):await call("driver_set_status",{p_order:id,p_status:b.dataset.a==="out"?"out_for_delivery":"completed"});
+  if(!r||!r.ok){alert(r&&r.reason==="taken"?L("سبقك عامل آخر إلى هذا الطلب.","Un autre livreur a pris cette commande."):r&&r.reason==="busy"?L("أنهِ طلبك الحالي أولًا. لا يُسمح لك بأكثر من هذا العدد من الطلبات معًا.","Terminez d’abord votre commande en cours."):L("تعذّر تنفيذ العملية. أعد المحاولة.","Opération impossible. Réessayez."))}
+  else if(b.dataset.a==="take"){tab="mine";document.querySelectorAll("[data-t]").forEach(x=>x.classList.toggle("on",x.dataset.t==="mine"))}}
+ catch(x){alert(L("تعذّر الاتصال. أعد المحاولة.","Connexion impossible. Réessayez."))}refresh()};
+if(window.sb&&me&&me.n&&me.k)enter();

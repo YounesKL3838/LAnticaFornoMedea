@@ -97,3 +97,6 @@ main h3{margin:22px 4px 8px;font-size:16px;color:var(--gold)}
 .hb i{font-style:normal;font-size:36px}.hb b{font-size:19px}.hb small{color:var(--mut);font-size:13px;line-height:1.6}.hb .badge{top:10px;inset-inline-end:12px;font-size:13px;min-width:24px;text-align:center}
 .hr{display:flex;gap:8px;justify-content:center;margin-top:4px}
 .av .avh{padding:12px 0 6px;font-weight:700;font-size:16px;color:var(--gold)}.av{padding-bottom:6px}
+
+.b.ok2{background:linear-gradient(135deg,#1f9d6e,#127a52);color:#fff;border:0;width:100%;padding:12px;font-size:15px;box-shadow:0 6px 16px #1f9d6e55}
+.dc .det{border-top:1px dashed var(--line);margin-top:8px}.dc small{color:var(--mut);display:block}
