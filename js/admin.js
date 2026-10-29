@@ -153,7 +153,6 @@ async function shrink(f,max){const u=URL.createObjectURL(f);try{const im=await n
  const t=f.type==="image/png"?"image/png":"image/jpeg";return await new Promise((r,x)=>c.toBlob(b=>b?r(b):x(new Error("تعذّر ضغط الصورة")),t,.78))}finally{URL.revokeObjectURL(u)}}
 const shown=new Set();
 function stats(){const td=new Date().toLocaleDateString("sv"),T=orders.filter(o=>new Date(o.created_at).toLocaleDateString("sv")===td),n=orders.filter(o=>o.status==="new").length,pc=orders.filter(o=>o.status==="confirmed").length;
- $("stats").innerHTML=[["🔔",n,"جديد"],["✅",pc,"مؤكد"],["📦",T.length,"طلبات اليوم"]].map(([i,v,l])=>`<div class="stat"><small>${i}</small><b>${v}</b><span>${l}</span></div>`).join("");
  const nb=$("nb");nb.textContent=n;nb.hidden=!n;const hn=$("hn");if(hn){hn.textContent=n;hn.hidden=!n}}
 const OPEN=new Set();
 document.addEventListener("toggle",e=>{const d=e.target;if(d.classList&&d.classList.contains("catbox"))d.open?OPEN.add(d.dataset.c):OPEN.delete(d.dataset.c)},true);
@@ -258,15 +257,18 @@ function drvSum(){const el=$("dsum"),dv=$("fdr").value,tk=orders.filter(o=>o.dri
  if(!tk.length){el.innerHTML="";return}
  const unp=o=>o.status==="completed"&&!o.driver_paid,sm=a=>a.reduce((s,o)=>s+(o.subtotal||0),0),fee=a=>a.reduce((s,o)=>s+(o.delivery_fee||0),0),by={};
  tk.forEach(o=>{(by[o.driver_id]=by[o.driver_id]||[]).push(o)});
- const nm=id=>{const d=DM[id];return d?N(d.n,d.f):"—"};
- if(dv){const L=by[dv]||[],done=L.filter(o=>o.status==="completed").length,paid=L.filter(o=>o.driver_paid).length,u=L.filter(unp);
-  el.innerHTML=`<div class="dsum"><b>🛵 ${E(nm(dv))}</b> : ${fr?"a pris":"أخذ"} <b>${L.length}</b> • ${fr?"livrées":"سُلِّم"} <b>${done}</b> • ${fr?"payées":"دفع"} <b>${paid}</b><br>🍕 ${fr?"Valeur des commandes":"قيمة الطلبات"} : <b>${fmt(sm(L))}</b> • 🛵 ${fr?"Frais de livraison gardés":"أجرة توصيله (يحتفظ بها)"} : <b>${fmt(fee(L))}</b><br>💵 ${fr?"Non payé":"غير مدفوع"} : <b class="${u.length?"neg":""}">${fmt(sm(u))}</b> (${u.length})</div>`;return}
- const all=tk.filter(unp);
- el.innerHTML=`<div class="dsum">💵 ${fr?"Total non payé":"مجموع غير المدفوع"} : <b class="${all.length?"neg":""}">${fmt(sm(all))}</b> (${all.length})</div><div class="dsum chips">${Object.keys(by).map(id=>{const u=by[id].filter(unp);return `<button class="b s" data-dv="${id}">🛵 ${E(nm(id))} <em>${by[id].length}</em>${u.length?` <small class="neg">${fmt(sm(u))}</small>`:""}</button>`}).join("")}</div>`}
-$("dsum").onclick=e=>{const b=e.target.closest("[data-dv]");if(b){$("fdr").value=b.dataset.dv;renderOrders()}};
+ const nm=id=>{const d=DM[id];return d?N(d.n,d.f):"—"},pay=id=>{const n=(by[id]||[]).filter(unp).length;return n?`<button class="b s okb" data-payall="${id}">💵 ${fr?"Tout payé":"دفع الكل"} (${n})</button>`:""};
+ if(dv){const L=by[dv]||[],done=L.filter(o=>o.status==="completed").length,paid=L.filter(o=>o.driver_paid).length;
+  el.innerHTML=`<div class="dsum"><b>🛵 ${E(nm(dv))}</b> : ${fr?"a pris":"أخذ"} <b>${L.length}</b> • ${fr?"livrées":"سُلِّم"} <b>${done}</b> • ${fr?"payées":"دفع"} <b>${paid}</b><br>🍕 ${fr?"Valeur des commandes":"قيمة الطلبات"} : <b>${fmt(sm(L))}</b> • 🛵 ${fr?"Frais de livraison gardés":"أجرة توصيله (يحتفظ بها)"} : <b>${fmt(fee(L))}</b>${pay(dv)?`<div style="margin-top:8px">${pay(dv)}</div>`:""}</div>`;return}
+ el.innerHTML=`<div class="dsum chips">${Object.keys(by).map(id=>`<span class="cw"><button class="b s" data-dv="${id}">🛵 ${E(nm(id))} <em>${by[id].length}</em></button>${pay(id)}</span>`).join("")}</div>`}
+$("dsum").onclick=e=>{const pa=e.target.closest("[data-payall]");if(pa){payAll(pa.dataset.payall);return}const b=e.target.closest("[data-dv]");if(b){$("fdr").value=b.dataset.dv;renderOrders()}};
 /* ===== تغيير عامل التوصيل ===== */
 function chDrvRow(o){const cur=o.driver_id||o.target_driver_id||"";
  return `<div class="row" style="margin:6px 0;justify-content:flex-start"><span>🛵 تغيير العامل</span><select data-chdrv="${o.id}" style="width:auto;margin:0"><option value="">— إعادة للجميع —</option>${Object.keys(DM).filter(id=>DM[id].a!==false||id===cur).map(id=>`<option value="${id}" ${cur===id?"selected":""}>${E(N(DM[id].n,DM[id].f))}</option>`).join("")}</select></div>`}
 async function chDriver(id,sel){if(!confirm("تغيير عامل التوصيل لهذا الطلب؟")){loadOrders();return}
  const r=await sb.rpc("admin_set_order_driver",{p_order:id,p_driver:sel.value||null});
  if(r.error){alert(/function|admin_set_order_driver/.test(r.error.message)?"شغّل update-v15.sql أولًا":r.error.message)}loadOrders()}
+async function payAll(id){const ids=orders.filter(o=>o.driver_id===id&&o.status==="completed"&&!o.driver_paid).map(o=>o.id),d=DM[id],fr=LG==="fr";if(!ids.length)return;
+ if(!confirm(fr?"Confirmer que "+N(d.n,d.f)+" a payé toutes ses "+ids.length+" commandes non payées ?":"تأكيد أن العامل "+N(d.n,d.f)+" دفع كل طلباته غير المدفوعة ("+ids.length+")؟"))return;
+ const r=await sb.from("orders").update({driver_paid:true,driver_paid_at:new Date().toISOString()}).in("id",ids).select("id");
+ if(r.error||!r.data||r.data.length!==ids.length){alert(fr?"Enregistrement incomplet. Réessayez.":"لم يُحفظ كل شيء. أعد المحاولة.")}loadOrders()}
