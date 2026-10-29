@@ -142,3 +142,4 @@ button,select,summary,[data-t],[data-a],[data-av]{touch-action:manipulation;-web
 .dsum{margin:0 0 10px;padding:10px 12px;background:var(--card2);border:1px solid var(--line);border-radius:12px;font-size:14px;line-height:1.8}
 .dsum.chips{display:flex;flex-wrap:wrap;gap:6px;background:none;border:0;padding:0}.dsum.chips em{font-style:normal;background:var(--red);border-radius:20px;padding:0 8px;margin-inline-start:6px;font-size:12px}
 .neg{color:#ff8f8f}.dsum.chips small{margin-inline-start:4px;font-size:12px}
+.dsum.chips .cw{display:inline-flex;gap:4px;align-items:center}.dsum.chips .okb{padding:6px 10px;font-size:13px}
