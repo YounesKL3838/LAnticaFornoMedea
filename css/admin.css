@@ -100,3 +100,41 @@ main h3{margin:22px 4px 8px;font-size:16px;color:var(--gold)}
 
 .b.ok2{background:linear-gradient(135deg,#1f9d6e,#127a52);color:#fff;border:0;width:100%;padding:12px;font-size:15px;box-shadow:0 6px 16px #1f9d6e55}
 .dc .det{border-top:1px dashed var(--line);margin-top:8px}.dc small{color:var(--mut);display:block}
+
+/* ===== ضبط الهاتف (لوحة التحكم + لوحة العامل) ===== */
+html,body{overflow-x:hidden;-webkit-text-size-adjust:100%}img{max-width:100%}
+button,select,summary,[data-t],[data-a],[data-av]{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.top{padding-top:env(safe-area-inset-top)}body{padding-bottom:env(safe-area-inset-bottom)}
+#login,#home{min-height:100vh;min-height:100dvh}
+@media (max-width:640px){
+ input,select,textarea{font-size:16px}
+ .b{min-height:42px}.b.s{padding:9px 12px}
+ .top header{padding:8px 12px 2px;gap:6px}.brand{font-size:16px}.brand img{width:30px;height:30px}
+ .acts{gap:5px}.acts .b{padding:8px 10px;min-height:38px;font-size:14px}#who{max-width:84px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}
+ .top .tabs{padding:8px 10px 10px;gap:6px;scroll-snap-type:x proximity}.top .tabs .b{scroll-snap-align:start;padding:9px 13px;font-size:14px}
+ main{padding:10px}.p,.o{padding:11px 12px;border-radius:14px}
+ .bar{flex-wrap:wrap}.bar>*{flex:1 1 130px}
+ #stats{gap:6px}.stat{padding:6px 8px}
+ .o .row{gap:4px 8px}.o .row small{flex-basis:100%}
+ .det{font-size:15px}
+ .det .row{flex-direction:column;align-items:stretch;gap:8px}
+ .det .row .b,.det .row select{width:100%!important;margin:0!important;min-height:44px}
+ .det .row select{padding:10px}
+ .pr{flex-direction:column;align-items:stretch;gap:8px}
+ .pr>.row:last-child{display:grid;grid-template-columns:1fr 1fr;gap:6px}.pr .b{padding:10px 6px;min-height:42px;font-size:14px}
+ .pr>.row:first-child{justify-content:flex-start}.pr img{width:46px;height:46px}
+ .catbox summary{padding:14px 0;font-size:17px}.catbox{padding:0 11px 10px}
+ .zr{gap:6px}.zr .z-name_ar,.zr .z-name_fr{flex:1 1 100%}.zr .z-fee,.zr .z-sort_order{flex:1 1 80px}.zr .dph,.zr .dpn,.zr .dmx{flex:1 1 45%!important}
+ .zr .b{flex:1 1 40%;min-height:40px}.zr .chk{flex:1 1 40%;font-size:13px}
+ #modal{padding:6px}.box{padding:14px;border-radius:18px}.box .row{gap:8px}.box .row .b{flex:1}
+ .rw .n,.rw .f{flex:1 1 100%}.rw .p{flex:1 1 90px;width:auto}.rw .b{min-height:40px}
+ .grid{grid-template-columns:1fr}
+ #toast{top:calc(env(safe-area-inset-top) + 104px);left:8px;right:8px;font-size:14px}
+ .hb{padding:20px 14px}
+ /* لوحة العامل */
+ .dc{padding:12px}.dc .det{font-size:16px;line-height:1.7}.dc .b.ok2{padding:15px;font-size:17px;min-height:52px}
+ .dc a[href^="tel"]{display:inline-block;padding:6px 2px;font-size:18px;font-weight:700}
+}
+@media (max-width:380px){.brand small{display:none}.top .tabs .b{padding:8px 10px;font-size:13px}.stat span{font-size:10px}}
+@media (max-width:640px){.pr>.row:last-child .b.d{grid-column:1/-1}}
+.bd-ok{background:#34c38f26;color:#34c38f}

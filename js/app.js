@@ -76,7 +76,7 @@ function showSuccess(d,lines,x){const fr=lang==="fr",L=(a,b)=>fr?b:a,k=n=>`style
  <p class="sx-u sx-msg" ${k(2)}>${T[1]}</p>
  <div class="sx-box sx-u" ${k(3)}>${info}${lines?`<div class="sx-items">${lines}</div>`:""}</div>
  ${money}
- ${CONFIG.tracking?`<button class="btn sec sx-u" ${k(5)} style="width:100%;margin-top:12px" onclick="openTrack()">📍 ${L("تتبّع طلبي","Suivre ma commande")}</button>`:""}
+ ${CONFIG.tracking?`<button class="btn tk-cta sx-u" ${k(5)} style="width:100%;margin-top:12px" onclick="openTrack()"><i class="tk-pin">📍</i> ${L("تتبّع طلبي","Suivre ma commande")}</button>`:""}
  <button class="btn sx-u" ${k(5)} style="width:100%;margin-top:10px" onclick="closeS()">${L("العودة إلى القائمة","Retour au menu")}</button></div>`);
  try{navigator.vibrate&&navigator.vibrate([40,30,40])}catch(e){}}
 let ANIM=1,QS="";
@@ -289,7 +289,7 @@ async function openTrack(){const o=tkGet();if(!o||!CONFIG.tracking)return;
 async function tkCopy(b){const o=tkGet();if(!o)return;const u=location.origin+location.pathname+"?track="+o.t;try{await navigator.clipboard.writeText(u);b.textContent="✓ "+(lang==="fr"?"Lien copié":"تم النسخ")}catch(e){prompt(lang==="fr"?"Copiez ce lien":"انسخ الرابط",u)}}
 async function refreshTk(){try{const s=await sb.from("restaurant_settings").select("tracking_enabled").eq("id",1).maybeSingle();CONFIG.tracking=!!(s.data&&s.data.tracking_enabled)}catch(e){}}
 document.addEventListener("visibilitychange",async()=>{if(document.visibilityState==="visible"&&CONFIG.cats.length){await refreshTk();tkPill()}});
-function tkPill(){let p=$("tkpill");const o=tkGet(),on=CONFIG.tracking&&o&&!o.done;if(!on){p&&p.remove();return}if(!p){p=document.createElement("button");p.id="tkpill";p.className="tkpill";p.onclick=openTrack;document.body.appendChild(p)}p.textContent="📍 "+(lang==="fr"?"Suivre ma commande":"تتبّع طلبك")}
+function tkPill(){let p=$("tkpill");const o=tkGet(),on=CONFIG.tracking&&o&&!o.done;if(!on){p&&p.remove();return}if(!p){p=document.createElement("button");p.id="tkpill";p.className="tkpill";p.onclick=openTrack;document.body.appendChild(p)}p.innerHTML='<i class="tk-pin">📍</i> '+(lang==="fr"?"Suivre ma commande":"تتبّع طلبك")}
 function tkInit(){if(!CONFIG.tracking){tkPill();return}const q=new URLSearchParams(location.search).get("track");
  if(q&&/^[0-9a-f-]{36}$/i.test(q)){tkSet({t:q,n:"",ts:Date.now()});history.replaceState(null,"",location.pathname);tkPill();setTimeout(openTrack,400);return}tkPill()}
 /* السحب يمينًا/يسارًا لتغيير الفئة مع حركة انزلاق */

@@ -150,3 +150,12 @@ header>span{display:contents}header{justify-content:flex-end;align-items:center;
 @media (prefers-reduced-motion:reduce){.tk-l li.now .dot{animation:none}}
 
 .tk-dr{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:12px;margin:8px 0;text-align:center;line-height:1.8}.tk-dr a{color:#ffb703;font-weight:700;text-decoration:none}
+
+/* لفت الانتباه لزر تتبّع الطلب */
+.tk-cta{position:relative;background:linear-gradient(135deg,#ffb703,#ff8800)!important;color:#1a1100!important;font-weight:800;border:0;box-shadow:0 8px 24px rgba(255,150,0,.5)}
+.tk-cta::after,.tkpill::after{content:"";position:absolute;inset:-3px;border-radius:inherit;border:2px solid #ffb703;animation:tkring 1.6s ease-out infinite;pointer-events:none}
+.tk-pin{display:inline-block;font-style:normal;animation:tkbob 1.1s ease-in-out infinite}
+.tkpill{background:linear-gradient(135deg,#ffb703,#ff8800)!important;color:#1a1100!important;box-shadow:0 8px 26px rgba(255,150,0,.55)!important}
+@keyframes tkring{0%{transform:scale(1);opacity:.9}100%{transform:scale(1.18);opacity:0}}
+@keyframes tkbob{0%,100%{transform:translateY(0) rotate(0)}30%{transform:translateY(-5px) rotate(-12deg)}60%{transform:translateY(0) rotate(10deg)}}
+@media (prefers-reduced-motion:reduce){.tk-cta::after,.tkpill::after,.tk-pin{animation:none}}
