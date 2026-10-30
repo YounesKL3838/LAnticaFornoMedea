@@ -259,9 +259,15 @@ function drvSum(){const el=$("dsum"),dv=$("fdr").value,tk=orders.filter(o=>o.dri
  tk.forEach(o=>{(by[o.driver_id]=by[o.driver_id]||[]).push(o)});
  const nm=id=>{const d=DM[id];return d?N(d.n,d.f):"—"},pay=id=>{const n=(by[id]||[]).filter(unp).length;return n?`<button class="b s okb" data-payall="${id}">💵 ${fr?"Tout payé":"دفع الكل"} (${n})</button>`:""};
  if(dv){const L=by[dv]||[],done=L.filter(o=>o.status==="completed").length,paid=L.filter(o=>o.driver_paid).length;
+<<<<<<< HEAD
   el.innerHTML=`<div class="dsum"><b>🛵 ${E(nm(dv))}</b> ${dutyTxt(dv)} : ${fr?"a pris":"أخذ"} <b>${L.length}</b> • ${fr?"livrées":"سُلِّم"} <b>${done}</b> • ${fr?"payées":"دفع"} <b>${paid}</b><br>🍕 ${fr?"Valeur des commandes":"قيمة الطلبات"} : <b>${fmt(sm(L))}</b> • 🛵 ${fr?"Frais de livraison gardés":"أجرة توصيله (يحتفظ بها)"} : <b>${fmt(fee(L))}</b><br>💵 ${fr?"Pas encore payé":"لم يدفع بعد"} : <b class="${L.some(unp)?"neg":""}">${fmt(sm(L.filter(unp)))}</b> (${L.filter(unp).length} ${fr?"commandes":"طلبات"})<div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">${pay(dv)}${rcvBtn(dv)}</div></div>`;return}
  el.innerHTML=`<div class="dsum chips">${Object.keys(by).map(id=>`<span class="cw"><button class="b s" data-dv="${id}">🛵 ${dot(id)}${E(nm(id))} <em>${by[id].length}</em></button></span>`).join("")}</div>`}
 $("dsum").onclick=e=>{const rb=e.target.closest("[data-rcv]");if(rb){setRcv(rb);return}const pa=e.target.closest("[data-payall]");if(pa){payAll(pa.dataset.payall);return}const b=e.target.closest("[data-dv]");if(b){$("fdr").value=b.dataset.dv;$("fdr").onchange()}};
+=======
+  el.innerHTML=`<div class="dsum"><b>🛵 ${E(nm(dv))}</b> : ${fr?"a pris":"أخذ"} <b>${L.length}</b> • ${fr?"livrées":"سُلِّم"} <b>${done}</b> • ${fr?"payées":"دفع"} <b>${paid}</b><br>🍕 ${fr?"Valeur des commandes":"قيمة الطلبات"} : <b>${fmt(sm(L))}</b> • 🛵 ${fr?"Frais de livraison gardés":"أجرة توصيله (يحتفظ بها)"} : <b>${fmt(fee(L))}</b>${pay(dv)?`<div style="margin-top:8px">${pay(dv)}</div>`:""}</div>`;return}
+ el.innerHTML=`<div class="dsum chips">${Object.keys(by).map(id=>`<span class="cw"><button class="b s" data-dv="${id}">🛵 ${E(nm(id))} <em>${by[id].length}</em></button>${pay(id)}</span>`).join("")}</div>`}
+$("dsum").onclick=e=>{const pa=e.target.closest("[data-payall]");if(pa){payAll(pa.dataset.payall);return}const b=e.target.closest("[data-dv]");if(b){$("fdr").value=b.dataset.dv;renderOrders()}};
+>>>>>>> 1452f7785ca1d4e646a9eb2c889a9a13d59cb453
 /* ===== تغيير عامل التوصيل ===== */
 function chDrvRow(o){const cur=o.driver_id||o.target_driver_id||"";
  return `<div class="row" style="margin:6px 0;justify-content:flex-start"><span>🛵 تغيير العامل</span><select data-chdrv="${o.id}" style="width:auto;margin:0"><option value="">— إعادة للجميع —</option>${Object.keys(DM).filter(id=>(DM[id].a!==false&&DM[id].r!==false)||id===cur).map(id=>`<option value="${id}" ${cur===id?"selected":""}>${E(N(DM[id].n,DM[id].f))}</option>`).join("")}</select></div>`}
@@ -272,6 +278,7 @@ async function payAll(id){const ids=orders.filter(o=>o.driver_id===id&&o.status=
  if(!confirm(fr?"Confirmer que "+N(d.n,d.f)+" a payé toutes ses "+ids.length+" commandes non payées ?":"تأكيد أن العامل "+N(d.n,d.f)+" دفع كل طلباته غير المدفوعة ("+ids.length+")؟"))return;
  const r=await sb.from("orders").update({driver_paid:true,driver_paid_at:new Date().toISOString()}).in("id",ids).select("id");
  if(r.error||!r.data||r.data.length!==ids.length){alert(fr?"Enregistrement incomplet. Réessayez.":"لم يُحفظ كل شيء. أعد المحاولة.")}loadOrders()}
+<<<<<<< HEAD
 /* ===== حالة العامل وتعطيله من تلقي الطلبات ===== */
 async function loadDM(){let d=await sb.from("drivers").select("id,name,name_fr,is_active,on_duty,receive_orders");if(d.error)d=await sb.from("drivers").select("id,name,name_fr,is_active");if(d.error)return;
  DM={};(d.data||[]).forEach(x=>DM[x.id]={n:x.name,f:x.name_fr,a:x.is_active,d:x.on_duty,r:x.receive_orders});const cur=$("fdr").value;
@@ -281,3 +288,5 @@ const dutyTxt=id=>{const d=DM[id],fr=LG==="fr";return !d?"":d.r===false?(fr?"�
 const rcvBtn=id=>{const d=DM[id];return !d?"":`<button class="b s ${d.r===false?"okb":"d"}" data-rcv="${id}" data-on="${d.r===false?1:0}">${d.r===false?"✅ تفعيل تلقي الطلبات":"🚫 تعطيل تلقي الطلبات"}</button>`};
 async function setRcv(b){b.disabled=true;const r=await sb.rpc("admin_set_driver_receive",{p_id:b.dataset.rcv,p_on:b.dataset.on==="1"});
  if(r.error){alert(/function|admin_set_driver_receive/.test(r.error.message)?"شغّل update-v16.sql أولًا":r.error.message);b.disabled=false;return}await loadDM()}
+=======
+>>>>>>> 1452f7785ca1d4e646a9eb2c889a9a13d59cb453

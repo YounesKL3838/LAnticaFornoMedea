@@ -143,6 +143,7 @@ button,select,summary,[data-t],[data-a],[data-av]{touch-action:manipulation;-web
 .dsum.chips{display:flex;flex-wrap:wrap;gap:6px;background:none;border:0;padding:0}.dsum.chips em{font-style:normal;background:var(--red);border-radius:20px;padding:0 8px;margin-inline-start:6px;font-size:12px}
 .neg{color:#ff8f8f}.dsum.chips small{margin-inline-start:4px;font-size:12px}
 .dsum.chips .cw{display:inline-flex;gap:4px;align-items:center}.dsum.chips .okb{padding:6px 10px;font-size:13px}
+<<<<<<< HEAD
 
 /* حالة دفع العامل: أخضر = دفع، أحمر = لم يدفع */
 .o.pay-ok{--c:#34c38f;border-color:#34c38f66;background:linear-gradient(145deg,#12261d,#16161a)}
@@ -151,3 +152,5 @@ button,select,summary,[data-t],[data-a],[data-av]{touch-action:manipulation;-web
 .dutyrow{padding:0 14px 10px}.dutyrow .b{width:100%;min-height:44px;font-weight:700}
 .b.s.duty-on{border-color:#34c38f;color:#34c38f;background:#34c38f1f}.b.s.duty-off{border-color:#6b7078;color:#aeb3bb}
 .bn{padding:12px;border-radius:12px;margin:0 0 10px;text-align:center;line-height:1.7}.bn.o{background:#ffb70022;color:#ffb703}.bn.w{background:#ff5d5d22;color:#ff8f8f}.bn.g{background:#34c38f1f;color:#34c38f}
+=======
+>>>>>>> 1452f7785ca1d4e646a9eb2c889a9a13d59cb453
