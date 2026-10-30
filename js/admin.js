@@ -217,13 +217,9 @@ function askPass(next){FS=null;$("box").innerHTML=`<h3>🔐 أدخل كلمة ا
  $("kg").onclick=go;$("kp").onkeydown=e=>{if(e.key==="Enter")go()};$("kc").onclick=()=>{$("modal").hidden=true}}
 function goMode(m){if(m==="set"&&!(UNLOCK&&Date.now()-UNLOCK<6e5)){askPass(()=>goMode("set"));return}$("home").hidden=true;$("top").hidden=false;document.querySelectorAll("[data-m]").forEach(b=>b.hidden=b.dataset.m!==m);const f=document.querySelector('[data-t][data-m="'+m+'"]');if(f)f.click()}
 async function loadAvail(){try{cats=ok(await sb.from("categories").select("*").order("sort_order"));prods=ok(await sb.from("products").select("*").order("sort_order"))}catch(x){alert(x.message);return}renderAvail()}
-let AF="all";
-function renderAvail(){const td=ymd(),q=($("aq").value||"").trim().toLowerCase(),fr=LG==="fr",so=p=>p.sold_out_date===td,na=p=>!p.is_available;
- $("af").innerHTML=[["all",fr?"Tous":"الكل",prods.length],["so",fr?"Épuisés aujourd’hui":"نفد اليوم",prods.filter(so).length],["na",fr?"Indisponibles":"غير متوفر",prods.filter(na).length]].map(([k,l,n])=>`<button class="fc ${AF===k?"on":""}" data-af="${k}">${l} <em>${n}</em></button>`).join("");
- const match=p=>(!q||((p.name_ar||"")+" "+(p.name_fr||"")).toLowerCase().includes(q))&&(AF==="all"||(AF==="so"?so(p):na(p)));
- const h=cats.map(c=>{const L=prods.filter(p=>p.category_id===c.id&&match(p));if(!L.length)return"";
-  return `<div class="catbox av"><div class="avh">${E(c.emoji)} ${E(N(c.name_ar,c.name_fr))} <em>${L.length}</em></div>`+L.map(p=>`<div class="pr ${p.is_hidden?"off":""}"><span class="row"><b>${E(N(p.name_ar,p.name_fr))}</b>${so(p)?'<span class="bd bd-o">نفد اليوم</span>':""}${na(p)?'<span class="bd bd-r">غير متوفر</span>':""}${p.is_hidden?'<span class="bd bd-g">مخفي</span>':""}</span><span class="row"><button class="b s warn ${so(p)?"on":""}" data-av="s" data-i="${p.id}">${so(p)?"إلغاء نفد اليوم":"نفد اليوم"}</button><button class="b s dis ${na(p)?"on":""}" data-av="v" data-i="${p.id}">${na(p)?"متوفر":"غير متوفر"}</button></span></div>`).join("")+"</div>"}).join("");
- $("al").innerHTML=h||`<div class="empty">🔍<br>${fr?"Aucun plat correspondant":"لا توجد وجبات مطابقة"}</div>`}
+function renderAvail(){const td=ymd(),q=($("aq").value||"").trim().toLowerCase();
+ $("al").innerHTML=cats.map(c=>{const L=prods.filter(p=>p.category_id===c.id&&(!q||(p.name_ar+" "+(p.name_fr||"")).toLowerCase().includes(q)));if(!L.length)return"";
+  return `<div class="catbox av"><div class="avh">${E(c.emoji)} ${E(N(c.name_ar,c.name_fr))}</div>`+L.map(p=>{const so=p.sold_out_date===td;return `<div class="pr ${p.is_hidden?"off":""}"><span class="row"><b>${E(N(p.name_ar,p.name_fr))}</b>${so?'<span class="bd bd-o">نفد اليوم</span>':""}${!p.is_available?'<span class="bd bd-r">غير متوفر</span>':""}</span><span class="row"><button class="b s warn ${so?"on":""}" data-av="s" data-i="${p.id}">${so?"إلغاء نفد اليوم":"نفد اليوم"}</button><button class="b s dis ${!p.is_available?"on":""}" data-av="v" data-i="${p.id}">${p.is_available?"غير متوفر":"متوفر"}</button></span></div>`}).join("")+"</div>"}).join("")||'<p class="mut">—</p>'}
 $("aq").oninput=renderAvail;
 $("al").onclick=async e=>{const b=e.target.closest("[data-av]");if(!b)return;const p=prods.find(x=>x.id===b.dataset.i),td=ymd();if(!p)return;
  const u=b.dataset.av==="s"?{sold_out_date:p.sold_out_date===td?null:td}:{is_available:!p.is_available};Object.assign(p,u);renderAvail();
@@ -276,7 +272,7 @@ function drvSum(){const el=$("dsum"),dv=$("fdr").value,tk=orders.filter(o=>o.dri
  if(!tk.length){el.innerHTML="";return}
  const unp=o=>o.status==="completed"&&!o.driver_paid,sm=a=>a.reduce((s,o)=>s+(o.subtotal||0),0),fee=a=>a.reduce((s,o)=>s+(o.delivery_fee||0),0),by={};
  tk.forEach(o=>{(by[o.driver_id]=by[o.driver_id]||[]).push(o)});
- const nm=id=>{const d=DM[id];return d?N(d.n,d.f):"—"},av=id=>`<span class="dav">${E([...nm(id)][0]||"?")}</span>`;
+ const nm=id=>{const d=DM[id];return d?N(d.n,d.f):"—"},av=id=>`<span class="av">${E([...nm(id)][0]||"?")}</span>`;
  if(dv){const L=by[dv]||[],done=L.filter(o=>o.status==="completed").length,paid=L.filter(o=>o.driver_paid).length,u=L.filter(unp),n=u.length;
   const st=(v,l,c)=>`<div class="${c||""}"><b>${v}</b><span>${l}</span></div>`;
   el.innerHTML=`<div class="dsel"><div class="dsel-h">${av(dv)}<div class="dsel-n"><b>${E(nm(dv))}</b>${pill(dv)}</div><button class="b s" data-dv="">✕ ${fr?"Tous":"كل العمال"}</button></div>
@@ -305,5 +301,3 @@ const rcvBtn=id=>{const d=DM[id];return !d?"":`<button class="b s ${d.r===false?
 async function setRcv(b){b.disabled=true;const r=await sb.rpc("admin_set_driver_receive",{p_id:b.dataset.rcv,p_on:b.dataset.on==="1"});
  if(r.error){alert(/function|admin_set_driver_receive/.test(r.error.message)?"شغّل update-v16.sql أولًا":r.error.message);b.disabled=false;return}await loadDM()}
 function spillRow(r){const s=!r.is_active?"off":r.receive_orders===false?"blk":r.on_duty===false?"off":"on";return `<span class="sp ${s}"><i></i>${!r.is_active?"موقوف":s==="on"?"نشط الآن":s==="blk"?"معطّل":"متوقف"}</span>`}
-$("af").onclick=e=>{const b=e.target.closest("[data-af]");if(b){AF=b.dataset.af;renderAvail()}};
-$("avr").onclick=loadAvail;
