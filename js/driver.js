@@ -1,6 +1,6 @@
 const $=id=>document.getElementById(id),E=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const FR=localStorage.getItem("drv_lang")==="fr",L=(a,b)=>FR?b:a,KEY="antica_driver",fmt=n=>new Intl.NumberFormat("fr-DZ").format(n)+(FR?" DA":" دج");
-let me=null,tab="new",orders=[],seen=null,timer=null,lim=1,act=0,duty=true,recv=true,owed=0,owedN=0;
+let me=null,tab="new",orders=[],seen=null,timer=null,lim=1,act=0,duty=true,recv=true,owed=0,owedN=0,prevRecv=null,offline=false;
 try{me=JSON.parse(localStorage.getItem(KEY)||"null")}catch(e){}
 document.documentElement.lang=FR?"fr":"ar";document.documentElement.dir=FR?"ltr":"rtl";document.title=L("عمال التوصيل","Livreurs");
 $("h_t").textContent="🛵 "+L("عامل التوصيل","Livreur");$("l_n").textContent=L("الاسم (عربي أو فرنسي)","Nom (arabe ou français)");$("l_k").textContent=L("الرقم السري","Code secret");$("lg").textContent=L("دخول","Se connecter");
@@ -16,9 +16,9 @@ $("lf").onsubmit=async ev=>{ev.preventDefault();$("lm").textContent="";const t={
 $("lo").onclick=()=>{localStorage.removeItem(KEY);clearInterval(timer);location.reload()};
 function enter(){$("login").hidden=true;$("app").hidden=false;$("who").textContent=me.d||me.n;refresh();clearInterval(timer);timer=setInterval(refresh,3000)}
 document.querySelectorAll("[data-t]").forEach(b=>b.onclick=()=>{tab=b.dataset.t;document.querySelectorAll("[data-t]").forEach(x=>x.classList.toggle("on",x===b));render()});
-async function refresh(){let d;try{d=await call("driver_orders")}catch(e){return}
+async function refresh(){let d;try{d=await call("driver_orders");offline=false}catch(e){offline=true;render();return}
  if(!d||!d.ok){localStorage.removeItem(KEY);clearInterval(timer);alert(L("انتهت الجلسة أو تغيّر الرقم السري. سجّل الدخول من جديد.","Session expirée ou code secret modifié. Reconnectez-vous."));location.reload();return}
- orders=d.orders||[];lim=d.max||1;act=d.active||0;duty=d.on_duty!==false;recv=d.receive!==false;owed=d.owed||0;owedN=d.owed_n||0;const fresh=orders.filter(o=>!o.mine&&seen&&!seen.has(o.id));
+ orders=d.orders||[];lim=d.max||1;act=d.active||0;duty=d.on_duty!==false;recv=d.receive!==false;owed=d.owed||0;owedN=d.owed_n||0;if(prevRecv===true&&!recv)notify(L("🚫 أوقف المطعم تلقي الطلبات لحسابك","🚫 Le restaurant a suspendu vos commandes"));else if(prevRecv===false&&recv)notify(L("✅ أعاد المطعم تفعيل تلقي الطلبات لحسابك","✅ Le restaurant a réactivé vos commandes"));prevRecv=recv;const fresh=orders.filter(o=>!o.mine&&seen&&!seen.has(o.id));
  if(fresh.length){$("toast").textContent=L("🔔 طلب توصيل جديد: ","🔔 Nouvelle livraison : ")+fresh.map(o=>o.order_number).join(", ");$("toast").hidden=false;beep();setTimeout(()=>$("toast").hidden=true,8000)}
  seen=new Set(orders.map(o=>o.id));render()}
 const items=o=>(o.items||[]).map(l=>`<div>${l.qty}× ${E(nm(l,"name"))}${l.size?" ("+E(nm(l,"size"))+")":""}<small>${[...(l.choices||[]).map(c=>E(nm(c,"name"))),(l.extras||[]).length?"+ "+l.extras.map(e=>E(nm(e,"name"))).join(", "):"",(l.removed||[]).length?L("بدون: ","Sans : ")+l.removed.map(e=>E(nm(e,"name"))).join(", "):"",l.note?E(l.note):""].filter(Boolean).join(" • ")}</small></div>`).join("");
@@ -35,10 +35,12 @@ $("list").onclick=async e=>{const b=e.target.closest("[data-a]");if(!b)return;if
   else if(b.dataset.a==="take"){tab="mine";document.querySelectorAll("[data-t]").forEach(x=>x.classList.toggle("on",x.dataset.t==="mine"))}}
  catch(x){alert(L("تعذّر الاتصال. أعد المحاولة.","Connexion impossible. Réessayez."))}refresh()};
 if(window.sb&&me&&me.n&&me.k)enter();
-function dutyBtn(){const b=$("dt");b.textContent=duty?L("🟢 في الخدمة — اضغط للتوقف","🟢 En service — appuyez pour arrêter"):L("⚪ متوقف عن العمل — اضغط للعودة","⚪ Hors service — appuyez pour reprendre");b.className="b s "+(duty?"duty-on":"duty-off")}
+function dutyBtn(){const b=$("dt");if(!recv){b.textContent=L("🚫 تلقي الطلبات متوقف من المطعم","🚫 Commandes suspendues par le restaurant");b.className="b s duty-off";b.disabled=true;return}b.disabled=false;b.textContent=duty?L("🟢 في الخدمة — اضغط للتوقف","🟢 En service — appuyez pour arrêter"):L("⚪ متوقف عن العمل — اضغط للعودة","⚪ Hors service — appuyez pour reprendre");b.className="b s "+(duty?"duty-on":"duty-off")}
 function banners(){let h="";
- h+=owed>0?`<div class="bn o">💵 ${L("المطلوب منك للمطعم","À remettre au restaurant")} : <b>${fmt(owed)}</b> (${owedN} ${L("طلبات غير مدفوعة","commandes non payées")})</div>`:`<div class="bn g">✅ ${L("لا توجد مبالغ غير مدفوعة عليك","Aucun montant impayé")}</div>`;
- if(!recv)h+=`<div class="bn w">🚫 ${L("أوقف المطعم تلقي الطلبات لحسابك. يمكنك متابعة طلباتك الحالية فقط.","Le restaurant a suspendu la réception de commandes pour votre compte. Vous pouvez suivre vos commandes en cours.")}</div>`;
+ if(offline)h+=`<div class="bn off">📡 ${L("لا يوجد اتصال بالإنترنت. سنعيد المحاولة تلقائيًا.","Pas de connexion. Nouvelle tentative automatique.")}</div>`;
+ if(!recv)h+=`<div class="bn w big"><b>🚫 ${L("تم إيقاف تلقي الطلبات لحسابك","La réception de commandes est suspendue pour votre compte")}</b><br>${L("لن تصلك طلبات جديدة. يمكنك متابعة طلباتك الحالية فقط. للاستفسار تواصل مع المطعم.","Vous ne recevrez plus de nouvelles commandes. Vous pouvez seulement suivre vos commandes en cours. Contactez le restaurant.")}</div>`;
  else if(!duty)h+=`<div class="bn w">⚪ ${L("أنت متوقف عن العمل: لن تصلك طلبات جديدة حتى تعود إلى الخدمة.","Vous êtes hors service : aucune nouvelle commande tant que vous ne reprenez pas.")}</div>`;
+ h+=owed>0?`<div class="bn o">💵 ${L("المطلوب منك للمطعم","À remettre au restaurant")} : <b>${fmt(owed)}</b> (${owedN} ${L("طلبات غير مدفوعة","commandes non payées")})</div>`:`<div class="bn g">✅ ${L("لا توجد مبالغ غير مدفوعة عليك","Aucun montant impayé")}</div>`;
  return h}
+function notify(m){$("toast").textContent=m;$("toast").hidden=false;beep();setTimeout(()=>$("toast").hidden=true,9000)}
 $("dt").onclick=async()=>{const on=!duty;duty=on;render();try{const r=await call("driver_set_duty",{p_on:on});if(!r||!r.ok)throw new Error("x")}catch(e){duty=!on;alert(L("تعذّر تغيير الحالة. أعد المحاولة.","Impossible de changer le statut. Réessayez."))}refresh()};
