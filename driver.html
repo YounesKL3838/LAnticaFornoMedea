@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#0b0b0d"><meta name="robots" content="noindex,nofollow"><title>عمال التوصيل</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="css/admin.css?v=18"></head><body>
-<section id="login"><form id="lf"><button type="button" class="b s lang" style="align-self:flex-start"></button><img src="images/logo.png" alt="" class="lg-logo"><h2 id="h_t"></h2><label id="l_n"></label><input id="dn" required autocomplete="username"><label id="l_k"></label><input id="dk" type="password" required autocomplete="current-password" inputmode="numeric"><button id="lg" class="b" type="submit"></button><p id="lm" class="err"></p></form></section>
-<section id="app" hidden>
-<div class="top"><header><b class="brand"><img src="images/logo.png" alt=""><span>L’Antica</span><small id="sb"></small></b><span class="acts"><b id="who"></b><button class="b s lang"></button><button class="b s" id="lo"></button></span></header>
-<nav class="tabs"><button class="b s on" data-t="new"><span id="tn"></span><em id="nb" class="badge" hidden></em></button><button class="b s" data-t="mine"><span id="tm"></span></button></nav><div class="dutyrow"><button class="b s" id="dt"></button></div></div>
-<div id="toast" hidden></div><main><div id="list"></div></main></section>
+<script src="js/theme.js?v=19"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="css/admin.css?v=19"></head><body>
+<section id="login"><form id="lf"><div class="row" style="justify-content:flex-start;gap:8px"><button type="button" class="b s lang"></button><button type="button" class="b s thm"></button></div><img src="images/logo.png" alt="" class="lg-logo"><h2 id="h_t"></h2><label id="l_n"></label><input id="dn" required autocomplete="username"><label id="l_k"></label><input id="dk" type="password" required autocomplete="current-password" inputmode="numeric"><button id="lg" class="b" type="submit"></button><p id="lm" class="err"></p></form></section>
+<section id="app" class="dm" hidden>
+<div class="top"><header><b class="brand"><img src="images/logo.png" alt=""><span>L’Antica</span><small id="sb"></small></b><span class="acts"><button class="b s thm"></button><button class="b s lang"></button><button class="b s" id="lo"></button></span></header>
+<nav class="tabs"><button class="b s on" data-t="new"><span id="tn"></span><em id="nb" class="badge" hidden></em></button><button class="b s" data-t="mine"><span id="tm"></span><em id="nb2" class="badge" hidden></em></button></nav></div>
+<div id="toast" hidden></div><main><div id="hero" class="hero"></div><div id="list"></div></main></section>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-<script src="js/supabase-config.js"></script><script src="js/driver.js?v=18"></script></body></html>
+<script src="js/supabase-config.js"></script><script src="js/driver.js?v=19"></script></body></html>
