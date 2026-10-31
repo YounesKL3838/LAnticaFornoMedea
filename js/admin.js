@@ -28,10 +28,10 @@ function enter(){$("login").hidden=true;$("app").hidden=false;goHome();sb.from("
 const TABS=["orders","avail","prods","zones","drv","sets","owner"];
 document.querySelectorAll("[data-t]").forEach(b=>b.onclick=()=>{TABS.forEach(t=>$(t).hidden=t!==b.dataset.t);document.querySelectorAll("[data-t]").forEach(x=>x.classList.toggle("on",x===b));const f={prods:loadProds,zones:()=>loadRows("zones"),sets:loadSets,avail:loadAvail,drv:loadDrivers}[b.dataset.t];if(f)f()});
 function beep(){try{const c=new AudioContext(),o=c.createOscillator();o.connect(c.destination);o.frequency.value=880;o.start();setTimeout(()=>{o.stop();c.close()},350)}catch(e){}}
-async function loadOrders(){try{orders=ok(await sb.from("orders").select("*").order("created_at",{ascending:false}).limit(300))}catch(x){console.error(x);return}
+async function loadOrders(manual){try{orders=ok(await sb.from("orders").select("*").order("created_at",{ascending:false}).limit(300))}catch(x){console.error(x);if(manual)alert((/JWT|expired|token/i.test(String(x&&x.message))?(LG==="fr"?"Session expirée. Reconnectez-vous.":"انتهت جلستك. سجّل الدخول من جديد."):(LG==="fr"?"Impossible d’actualiser : ":"تعذّر التحديث: ")+String((x&&x.message)||x)));return false}
  const fresh=orders.filter(o=>o.status==="new"&&seen&&!seen.has(o.id));
  if(fresh.length){$("toast").textContent="🔔 طلب جديد: "+fresh.map(o=>o.order_number).join("، ");$("toast").hidden=false;beep();setTimeout(()=>$("toast").hidden=true,8000)}
- seen=new Set(orders.map(o=>o.id));renderOrders()}
+ seen=new Set(orders.map(o=>o.id));renderOrders();return true}
 const TYC={delivery:"🛵",pickup:"🏪",dine_in:"🍽️",reservation:"📅"};
 const tyL=t=>LG==="fr"?({delivery:"Livraison",pickup:"À emporter",dine_in:"Sur place",reservation:"Réservation"}[t]||""):(TY[t]||"");
 const dstate=id=>{const d=DM[id];return !d?"off":d.r===false?"blk":d.d===false?"off":"on"};
@@ -57,7 +57,7 @@ function renderOrders(){stats();drvSum();$("actn").textContent=activeIds().lengt
  $("ol").innerHTML=L.map(orderCard).join("")||`<div class="empty">📭<br>${fr?"Aucune commande":"لا توجد طلبات"}</div>`;L.forEach(o=>shown.add(o.id))}
 $("ol").onclick=e=>{const pb=e.target.closest("[data-pay]");if(pb){setPaid(pb);return}const od=e.target.closest("[data-odel]");if(od){delOrders([od.dataset.odel]);return}const nb=e.target.closest("[data-nx]");if(nb){setNext(nb);return}const r=e.target.closest("[data-id]");if(r){open.has(r.dataset.id)?open.delete(r.dataset.id):open.add(r.dataset.id);renderOrders()}};
 $("ol").onchange=async e=>{const cd=e.target.dataset.chdrv;if(cd){await chDriver(cd,e.target);return}const id=e.target.dataset.st;if(!id)return;const r=await sb.from("orders").update({status:e.target.value}).eq("id",id);if(r.error)alert("تعذّر حفظ الحالة: "+r.error.message);loadOrders()};
-$("fs").onchange=renderOrders;$("fdr").onchange=()=>{open.clear();renderOrders()};$("rf").onclick=loadOrders;
+$("fs").onchange=renderOrders;$("fdr").onchange=()=>{open.clear();renderOrders()};$("rf").onclick=()=>busy($("rf"),async()=>{const a=await loadOrders(true);await loadDM();return a});
 /* ===== المنتجات ===== */
 async function loadProds(){try{cats=ok(await sb.from("categories").select("*").order("sort_order"));
  prods=ok(await sb.from("products").select("*,product_sizes(*),product_extras(*),product_removables(*),option_groups(*,group_options(*))").order("sort_order"))}catch(x){alert(x.message);return}
@@ -217,7 +217,7 @@ function askPass(next){FS=null;$("box").innerHTML=`<h3>🔐 أدخل كلمة ا
  const go=async()=>{$("km").textContent="";const r=await sb.rpc("check_settings_password",{p:$("kp").value});if(r.error){$("km").textContent="تعذّر التحقق. شغّل update-v8.sql";return}if(r.data!==true){$("km").textContent="كلمة السر غير صحيحة";$("kp").value="";return}UNLOCK=Date.now();$("modal").hidden=true;next()};
  $("kg").onclick=go;$("kp").onkeydown=e=>{if(e.key==="Enter")go()};$("kc").onclick=()=>{$("modal").hidden=true}}
 function goMode(m){if(m==="set"&&!(UNLOCK&&Date.now()-UNLOCK<6e5)){askPass(()=>goMode("set"));return}$("home").hidden=true;$("top").hidden=false;document.querySelectorAll("[data-m]").forEach(b=>b.hidden=b.dataset.m!==m);const f=document.querySelector('[data-t][data-m="'+m+'"]');if(f)f.click()}
-async function loadAvail(){try{cats=ok(await sb.from("categories").select("*").order("sort_order"));prods=ok(await sb.from("products").select("*").order("sort_order"))}catch(x){alert(x.message);return}renderAvail()}
+async function loadAvail(){try{cats=ok(await sb.from("categories").select("*").order("sort_order"));prods=ok(await sb.from("products").select("*").order("sort_order"))}catch(x){alert(x.message);return false}renderAvail();return true}
 let AF="all";
 function renderAvail(){const td=ymd(),q=($("aq").value||"").trim().toLowerCase(),fr=LG==="fr",so=p=>p.sold_out_date===td,na=p=>!p.is_available;
  $("af").innerHTML=[["all",fr?"Tous":"الكل",prods.length],["so",fr?"Épuisés aujourd’hui":"نفد اليوم",prods.filter(so).length],["na",fr?"Indisponibles":"غير متوفر",prods.filter(na).length]].map(([k,l,n])=>`<button class="fc ${AF===k?"on":""}" data-af="${k}">${l} <em>${n}</em></button>`).join("");
@@ -309,7 +309,7 @@ async function setRcv(b){b.disabled=true;const r=await sb.rpc("admin_set_driver_
  if(r.error){alert(/function|admin_set_driver_receive/.test(r.error.message)?"شغّل update-v16.sql أولًا":r.error.message);b.disabled=false;return}await loadDM()}
 function spillRow(r){const s=!r.is_active?"off":r.receive_orders===false?"blk":r.on_duty===false?"off":"on";return `<span class="sp ${s}"><i></i>${!r.is_active?"موقوف":s==="on"?"نشط الآن":s==="blk"?"معطّل":"متوقف"}</span>`}
 $("af").onclick=e=>{const b=e.target.closest("[data-af]");if(b){AF=b.dataset.af;renderAvail()}};
-$("avr").onclick=loadAvail;
+$("avr").onclick=()=>busy($("avr"),loadAvail);
 /* ===== نافذة العمال النشطين الآن ===== */
 $("actv").onclick=()=>{FS=null;const fr=LG==="fr",ids=activeIds(),rest=Object.keys(DM).filter(id=>DM[id].a!==false&&dstate(id)!=="on").length,
  run=id=>orders.filter(o=>o.driver_id===id&&["confirmed","ready","out_for_delivery"].includes(o.status)).length,
@@ -317,3 +317,6 @@ $("actv").onclick=()=>{FS=null;const fr=LG==="fr",ids=activeIds(),rest=Object.ke
  $("box").innerHTML=`<h3>🟢 ${fr?"Livreurs actifs maintenant":"العمال النشطون الآن"} (${ids.length})</h3>`+(ids.length?ids.map(id=>`<div class="arow"><span class="dav">${E([...nm(id)][0]||"?")}</span><div class="ai"><b>${E(nm(id))}</b>${DM[id].p?`<a class="tel" href="tel:${E(DM[id].p)}" dir="ltr">📞 ${E(DM[id].p)}</a>`:""}</div><span class="ac"><em>${run(id)}</em><small>${fr?"en cours":"جارية"}</small></span><button class="b s" data-actf="${id}">${fr?"Voir":"عرض"}</button></div>`).join(""):`<div class="empty">😴<br>${fr?"Aucun livreur actif pour le moment":"لا يوجد عمال نشطون حاليًا"}</div>`)+(rest?`<p class="mut" style="margin:10px 0 0">${rest} ${fr?"livreur(s) en pause ou suspendu(s)":"عامل متوقف أو معطّل"}</p>`:"")+`<div class="row" style="margin-top:12px"><button class="b s" id="actc">${fr?"Fermer":"إغلاق"}</button></div>`;
  $("modal").hidden=false;$("actc").onclick=()=>{$("modal").hidden=true}};
 $("box").addEventListener("click",e=>{const b=e.target.closest("[data-actf]");if(!b)return;$("modal").hidden=true;$("fdr").value=b.dataset.actf;$("fdr").onchange()});
+/* زر تحديث بحالة تحميل ونتيجة واضحة */
+async function busy(b,fn){const t=b.textContent,fr=LG==="fr";b.disabled=true;b.textContent=fr?"⏳ Actualisation…":"⏳ جارٍ التحديث…";let okk=true;try{okk=(await fn())!==false}catch(e){okk=false}
+ b.textContent=okk?(fr?"✓ Actualisé":"✓ تم التحديث"):(fr?"✗ Échec":"✗ تعذّر التحديث");setTimeout(()=>{b.textContent=t;b.disabled=false},1200)}
