@@ -215,3 +215,20 @@ button,select,summary,[data-t],[data-a],[data-av]{touch-action:manipulation;-web
 .avg{display:grid;grid-template-columns:1fr;gap:12px;align-items:start}@media(min-width:900px){.avg{grid-template-columns:1fr 1fr}}
 .avh em{font-style:normal;background:#ffffff14;border-radius:20px;padding:0 8px;margin-inline-start:6px;font-size:12px;color:#f5f5f7}
 .bn.big{font-size:16px;padding:16px;border:1px solid #ff5d5d66;line-height:1.8}.bn.off{background:#6b707833;color:#aeb3bb}
+
+/* أيقونات عمال أصغر + المتبقي + إجمالي غير المدفوع */
+.dg{gap:8px}.dcard{min-width:0;padding:6px 10px;gap:8px;border-radius:12px}
+.dcard .dav{width:30px;height:30px;font-size:14px}.dcard b{font-size:13.5px;margin-bottom:1px}.dcard small{font-size:11.5px;gap:6px}
+.dcard .sp{font-size:11px;padding:1px 8px}.dcard .du{display:block;font-size:12.5px;font-weight:700;margin-top:2px}.du.neg{color:#ff8f8f}.du.ok{color:#34c38f}
+.dsel .dav{width:38px;height:38px;font-size:16px}
+.utot{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#ff5d5d1a;border:1px solid #ff5d5d44;border-radius:12px;padding:9px 14px;margin:0 0 8px;font-size:14px}
+.utot b{font-size:17px;color:#ff8f8f}.utot.ok{background:#34c38f14;border-color:#34c38f44}.utot.ok b{color:#34c38f}.utot small{color:var(--mut)}
+.pl2.z{background:#ffffff12}
+
+.dcard .cnt{font-style:normal;font-weight:800;font-size:13px;min-width:24px;height:24px;border-radius:12px;background:var(--red);display:grid;place-items:center;padding:0 7px;margin-inline-start:2px}
+.dcard .du{display:none}
+
+/* طلبات متعددة الأعمدة على الحاسوب + أرقام العامل */
+@media(min-width:720px){.og{grid-template-columns:repeat(auto-fill,minmax(360px,1fr))}}
+@media(min-width:900px){#orders{max-width:1500px}}
+.dcard .cn2{display:flex;gap:4px;margin-inline-start:2px}.dcard .cnt.u{background:#ff5d5d33;color:#ff8f8f;font-size:12px}.dcard .cnt.u.z{background:#ffffff14;color:var(--mut)}
