@@ -299,3 +299,4 @@ html[data-theme="light"] .dsw{background:#eceef3}html[data-theme="light"] .sk{op
 html[data-theme="light"] .tabs .b.on{background:linear-gradient(135deg,#c1121f,#8e1015);color:#fff;border-color:transparent}
 html[data-theme="light"] .b.okb,html[data-theme="light"] .b.ok2{background:linear-gradient(135deg,#1f9d6e,#127a52);color:#fff;border-color:transparent}
 html[data-theme="light"] .fc.on,html[data-theme="light"] .b.s.duty-off{color:#fff}html[data-theme="light"] .b.s.duty-off{color:#556070}
+.b.s.openon{border-color:#34c38f;color:#34c38f;background:#34c38f1f}html[data-theme="light"] .b.s.openon{color:#0f8a5f}
