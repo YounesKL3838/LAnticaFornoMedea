@@ -300,3 +300,26 @@ html[data-theme="light"] .tabs .b.on{background:linear-gradient(135deg,#c1121f,#
 html[data-theme="light"] .b.okb,html[data-theme="light"] .b.ok2{background:linear-gradient(135deg,#1f9d6e,#127a52);color:#fff;border-color:transparent}
 html[data-theme="light"] .fc.on,html[data-theme="light"] .b.s.duty-off{color:#fff}html[data-theme="light"] .b.s.duty-off{color:#556070}
 .b.s.openon{border-color:#34c38f;color:#34c38f;background:#34c38f1f}html[data-theme="light"] .b.s.openon{color:#0f8a5f}
+
+/* ===== ضبط الهاتف: شريط أدوات الطلبات (لا يمس الحاسوب) ===== */
+@media (max-width:640px){
+ .tb-f{flex:1 1 100%;flex-wrap:wrap}.tb-f select{flex:1 1 140px}
+ .tb-a{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}.tb-a .b{width:100%;min-width:0;padding:9px 6px;font-size:14px;white-space:normal;line-height:1.35}
+}
+
+/* ===== ضبط الهاتف: تحسينات إضافية ===== */
+.zr[data-k]{display:flex}                       /* صفوف المناطق المدمجة (كانت تتحول إلى كتلة عادية) */
+#sets label:has(>input[type="checkbox"]),#box label:has(>input[type="checkbox"]){display:flex;align-items:center;gap:8px;padding:6px 0;color:inherit;font-size:14px}
+#sets .row>span{min-width:64px}
+@media (max-width:640px){
+ .rw .n,.rw .f{flex:1 1 140px}
+ .zr[data-k] .z-name_ar,.zr[data-k] .z-name_fr{flex:1 1 100%}
+ #sets .row{gap:6px}#sets input[type="time"]{flex:1 1 120px}
+ .dsel-h .b{width:100%}.dact .b{flex:1 1 100%}
+ .oc-t b{font-size:17px}
+}
+@media (max-width:640px){.rw input{min-width:0}.rw .n,.rw .f{flex:1 1 120px}.rw .p{flex:1 1 80px}}
+@media (max-width:640px){.rw .n,.rw .f{flex:1 1 90px}.rw .p{flex:0 0 72px;width:72px}.rw>.b{flex:0 0 38px;padding:0;min-height:42px}}
+
+.b.s.closedon{border-color:#ff5d5d;color:#ff8f8f;background:#ff5d5d1f}html[data-theme="light"] .b.s.closedon{color:#b42318}
+@media (max-width:640px){.tb-a #ma{grid-column:1/-1}}
