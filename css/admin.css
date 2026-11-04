@@ -323,3 +323,19 @@ html[data-theme="light"] .fc.on,html[data-theme="light"] .b.s.duty-off{color:#ff
 
 .b.s.closedon{border-color:#ff5d5d;color:#ff8f8f;background:#ff5d5d1f}html[data-theme="light"] .b.s.closedon{color:#b42318}
 @media (max-width:640px){.tb-a #ma{grid-column:1/-1}}
+
+/* ===== واجهة العامل: زر «طلباتي» السفلي + تفاصيل مطوية + قبول/إلغاء ===== */
+.dm main{padding-bottom:96px}
+.sect{font-weight:800;font-size:16px;margin:4px 4px 10px;display:flex;align-items:center;gap:8px}.sect em{font-style:normal;background:var(--red);color:#fff;border-radius:999px;padding:0 9px;font-size:13px}
+.mybtn{position:fixed;inset-inline:14px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:30;max-width:612px;margin-inline:auto;display:flex;align-items:center;justify-content:center;gap:10px;min-height:56px;border:0;border-radius:18px;background:linear-gradient(135deg,#c1121f,#8e1015);color:#fff;font:inherit;font-weight:800;font-size:17px;box-shadow:0 12px 30px #a4161a77;cursor:pointer;animation:up .4s both}
+.mybtn:active{transform:scale(.98)}.mybtn .badge{position:static;animation:none;font-size:13px}
+.msheet{position:fixed;inset:0;z-index:40;display:flex;align-items:flex-end;justify-content:center}
+.mback{position:absolute;inset:0;background:#000a;backdrop-filter:blur(4px);animation:fade .2s both}
+.mpanel{position:relative;width:100%;max-width:640px;max-height:88vh;max-height:88dvh;overflow:auto;background:var(--bg);border:1px solid var(--line);border-radius:22px 22px 0 0;padding:14px 14px calc(18px + env(safe-area-inset-bottom));animation:sheetUp .3s cubic-bezier(.2,.9,.3,1) both}
+@keyframes sheetUp{from{transform:translateY(100%)}to{transform:none}}
+.mph{position:sticky;top:-14px;z-index:2;display:flex;justify-content:space-between;align-items:center;margin:-14px -14px 12px;padding:14px;background:var(--bg);border-bottom:1px solid var(--line);font-size:17px}
+.acts2{display:grid;grid-template-columns:2fr 1fr;gap:8px}.acts2 .act{min-height:52px;font-size:16px}
+.act.no{background:linear-gradient(135deg,#4a1316,#2d0b0d);color:#ff8f8f;box-shadow:none;border:1px solid #7a2025}
+.more{display:block;width:100%;margin-top:10px;background:none;border:0;color:var(--mut);font:inherit;font-size:13.5px;padding:6px;cursor:pointer}
+.oc2-h{cursor:pointer}.oc2-d{margin-top:6px;border-top:1px dashed var(--line);padding-top:8px;animation:up .25s both}
+html[data-theme="light"] .act.no{background:#fde8e8;color:#b42318;border-color:#f5b5b0}
